@@ -1,0 +1,522 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "School Management API",
+    "description": "Bangladesh School Management System - REST API (Class 1-12)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:8000", "description": "Local" }
+  ],
+  "paths": {
+    "/api/v1/login": {
+      "post": {
+        "summary": "Login",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Success with token" },
+          "422": { "description": "Validation / Invalid credentials" }
+        }
+      }
+    },
+    "/api/v1/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": ["Auth"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/v1/user": {
+      "get": {
+        "summary": "Current user",
+        "tags": ["Auth"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "User with roles" } }
+      }
+    },
+    "/api/v1/dashboard": {
+      "get": {
+        "summary": "Admin dashboard KPIs",
+        "tags": ["Dashboard"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "students_present_today, total_students, total_due_amount"
+          }
+        }
+      }
+    },
+    "/api/v1/institutions": {
+      "get": {
+        "summary": "List institutions",
+        "tags": ["Institutions"],
+        "responses": { "200": { "description": "List" } }
+      }
+    },
+    "/api/v1/institutions/{id}": {
+      "get": { "summary": "Show institution", "tags": ["Institutions"] },
+      "put": { "summary": "Update institution", "tags": ["Institutions"] }
+    },
+    "/api/v1/academic-sessions": {
+      "get": {
+        "summary": "List academic sessions",
+        "tags": ["Academic"],
+        "parameters": [
+          { "name": "institution_id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "current_only", "in": "query", "schema": { "type": "boolean" } }
+        ],
+        "responses": { "200": { "description": "Paginated list" } }
+      },
+      "post": {
+        "summary": "Create academic session",
+        "tags": ["Academic"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "institution_id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "start_date": { "type": "string", "format": "date" },
+                  "end_date": { "type": "string", "format": "date" },
+                  "is_current": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/academic-sessions/{id}": {
+      "get": { "summary": "Show session", "tags": ["Academic"] },
+      "put": { "summary": "Update session", "tags": ["Academic"] }
+    },
+    "/api/v1/classes": {
+      "get": {
+        "summary": "List classes",
+        "tags": ["Academic"],
+        "parameters": [
+          { "name": "institution_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List" } }
+      },
+      "post": {
+        "summary": "Create class",
+        "tags": ["Academic"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "institution_id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "numeric_order": { "type": "integer" },
+                  "group": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/classes/{id}": {
+      "get": { "summary": "Show class", "tags": ["Academic"] },
+      "put": { "summary": "Update class", "tags": ["Academic"] }
+    },
+    "/api/v1/sections": {
+      "get": {
+        "summary": "List sections",
+        "tags": ["Academic"],
+        "parameters": [
+          { "name": "class_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List" } }
+      },
+      "post": {
+        "summary": "Create section",
+        "tags": ["Academic"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "class_id": { "type": "integer" },
+                  "shift_id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "capacity": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/sections/{id}": {
+      "get": { "summary": "Show section", "tags": ["Academic"] },
+      "put": { "summary": "Update section", "tags": ["Academic"] }
+    },
+    "/api/v1/subjects": {
+      "get": {
+        "summary": "List subjects",
+        "tags": ["Academic"],
+        "parameters": [
+          { "name": "institution_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List" } }
+      },
+      "post": {
+        "summary": "Create subject",
+        "tags": ["Academic"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "institution_id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "name_bn": { "type": "string" },
+                  "code": { "type": "string" },
+                  "is_optional": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/subjects/{id}": {
+      "get": { "summary": "Show subject", "tags": ["Academic"] },
+      "put": { "summary": "Update subject", "tags": ["Academic"] }
+    },
+    "/api/v1/students": {
+      "get": {
+        "summary": "List students",
+        "tags": ["Students"],
+        "parameters": [
+          { "name": "institution_id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } },
+          { "name": "per_page", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Paginated list" } }
+      },
+      "post": {
+        "summary": "Create student",
+        "tags": ["Students"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "institution_id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "name_bn": { "type": "string" },
+                  "date_of_birth": { "type": "string", "format": "date" },
+                  "gender": { "type": "string" },
+                  "address": { "type": "string" },
+                  "guardians": { "type": "array", "items": { "type": "object" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/students/{id}": {
+      "get": { "summary": "Show student", "tags": ["Students"] },
+      "put": { "summary": "Update student", "tags": ["Students"] }
+    },
+    "/api/v1/students/enroll": {
+      "post": {
+        "summary": "Enroll student in section",
+        "tags": ["Students"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["student_id", "section_id", "academic_session_id", "roll_no"],
+                "properties": {
+                  "student_id": { "type": "integer" },
+                  "section_id": { "type": "integer" },
+                  "academic_session_id": { "type": "integer" },
+                  "roll_no": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/attendance": {
+      "get": {
+        "summary": "Get attendance for section/date",
+        "tags": ["Attendance"],
+        "parameters": [
+          { "name": "section_id", "in": "query", "required": true, "schema": { "type": "integer" } },
+          { "name": "date", "in": "query", "required": true, "schema": { "type": "string", "format": "date" } }
+        ],
+        "responses": { "200": { "description": "List of student attendance" } }
+      },
+      "post": {
+        "summary": "Save attendance",
+        "tags": ["Attendance"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["section_id", "date", "attendances"],
+                "properties": {
+                  "section_id": { "type": "integer" },
+                  "date": { "type": "string", "format": "date" },
+                  "attendances": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "student_enrollment_id": { "type": "integer" },
+                        "status": { "type": "string", "enum": ["present", "absent", "late", "leave"] },
+                        "remark": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Saved" } }
+      }
+    },
+    "/api/v1/exam-terms": {
+      "get": {
+        "summary": "List exam terms",
+        "tags": ["Exams"],
+        "parameters": [
+          { "name": "academic_session_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Paginated list" } }
+      },
+      "post": {
+        "summary": "Create exam term",
+        "tags": ["Exams"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "institution_id": { "type": "integer" },
+                  "academic_session_id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "start_date": { "type": "string", "format": "date" },
+                  "end_date": { "type": "string", "format": "date" },
+                  "publish_status": { "type": "string", "enum": ["draft", "published"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/exam-terms/{id}": {
+      "get": { "summary": "Show exam term", "tags": ["Exams"] },
+      "put": { "summary": "Update exam term", "tags": ["Exams"] }
+    },
+    "/api/v1/marks": {
+      "get": {
+        "summary": "Get marks for exam/section/subject",
+        "tags": ["Exams"],
+        "parameters": [
+          { "name": "exam_term_id", "in": "query", "required": true, "schema": { "type": "integer" } },
+          { "name": "section_id", "in": "query", "required": true, "schema": { "type": "integer" } },
+          { "name": "subject_id", "in": "query", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List" } }
+      },
+      "post": {
+        "summary": "Save marks",
+        "tags": ["Exams"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["exam_term_id", "subject_id", "marks"],
+                "properties": {
+                  "exam_term_id": { "type": "integer" },
+                  "subject_id": { "type": "integer" },
+                  "marks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "student_enrollment_id": { "type": "integer" },
+                        "marks_obtained": { "type": "number" },
+                        "full_marks": { "type": "integer" },
+                        "absent_code": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Saved" } }
+      }
+    },
+    "/api/v1/exam-terms/{examTermId}/calculate-results": {
+      "post": {
+        "summary": "Calculate results for exam term",
+        "tags": ["Exams"],
+        "parameters": [
+          { "name": "examTermId", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Results calculated" } }
+      }
+    },
+    "/api/v1/fee-heads": {
+      "get": {
+        "summary": "List fee heads",
+        "tags": ["Fees"],
+        "parameters": [
+          { "name": "institution_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List" } }
+      }
+    },
+    "/api/v1/fee-structures": {
+      "get": {
+        "summary": "List fee structures",
+        "tags": ["Fees"],
+        "parameters": [
+          { "name": "academic_session_id", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List" } }
+      }
+    },
+    "/api/v1/invoices": {
+      "get": {
+        "summary": "List invoices",
+        "tags": ["Fees"],
+        "parameters": [
+          { "name": "student_id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Paginated list" } }
+      }
+    },
+    "/api/v1/payments": {
+      "post": {
+        "summary": "Record fee payment",
+        "tags": ["Fees"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["invoice_id", "amount", "payment_date"],
+                "properties": {
+                  "invoice_id": { "type": "integer" },
+                  "amount": { "type": "number" },
+                  "payment_date": { "type": "string", "format": "date" },
+                  "method": { "type": "string", "enum": ["cash", "bank", "bkash", "nagad", "other"] },
+                  "reference": { "type": "string" },
+                  "note": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Payment created" } }
+      }
+    },
+    "/api/v1/notices": {
+      "get": {
+        "summary": "List published notices",
+        "tags": ["Notices"],
+        "parameters": [
+          { "name": "institution_id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "audience", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Paginated list" } }
+      },
+      "post": {
+        "summary": "Create notice",
+        "tags": ["Notices"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "institution_id": { "type": "integer" },
+                  "title": { "type": "string" },
+                  "title_bn": { "type": "string" },
+                  "body": { "type": "string" },
+                  "body_bn": { "type": "string" },
+                  "audience": { "type": "string" },
+                  "is_published": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/v1/notices/{id}": {
+      "get": { "summary": "Show notice", "tags": ["Notices"] }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Token from login (Laravel Sanctum)"
+      }
+    }
+  },
+  "tags": [
+    { "name": "Auth" },
+    { "name": "Dashboard" },
+    { "name": "Institutions" },
+    { "name": "Academic" },
+    { "name": "Students" },
+    { "name": "Attendance" },
+    { "name": "Exams" },
+    { "name": "Fees" },
+    { "name": "Notices" }
+  ]
+}

@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes route-progress {
+  0% { transform: scaleX(0); transform-origin: left; opacity: 1; }
+  50% { transform: scaleX(1); transform-origin: left; opacity: 1; }
+  100% { transform: scaleX(1); transform-origin: right; opacity: 0; }
+}
+
+:root {
+  --foreground: 15 23 42;
+  --background: 240 245 252;
+}
+
+body {
+  color: rgb(var(--foreground));
+  background: rgb(var(--background));
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 shadow-sm;
+  }
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 focus:ring-primary-400 shadow-md hover:shadow-lg active:scale-[0.98];
+  }
+  .btn-secondary {
+    @apply btn bg-gradient-to-r from-slate-100 to-slate-200 text-slate-800 hover:from-slate-200 hover:to-slate-300 focus:ring-slate-400 border border-slate-200;
+  }
+  .card {
+    @apply rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition-shadow hover:shadow-md;
+  }
+  .card-accent {
+    @apply card border-t-4 border-t-primary-400;
+  }
+  .input {
+    @apply w-full rounded-xl border-2 border-slate-200 px-3 py-2.5 text-slate-900 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200;
+  }
+  .table-header {
+    @apply bg-gradient-to-r from-primary-50 to-primary-100/80 text-primary-900;
+  }
+  .table-row-hover {
+    @apply hover:bg-primary-50/60 transition-colors;
+  }
+  /* Image field previews - prevent layout breakage */
+  .img-preview-contain {
+    @apply object-contain max-h-full max-w-full;
+  }
+  .img-preview-cover {
+    @apply object-cover max-h-full max-w-full;
+  }
+}
