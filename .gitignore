@@ -36,3 +36,6 @@ backend/storage/framework/views/*
 
 # Misc
 *.sqlite
+
+# Docker volumes
+mysql_data/
