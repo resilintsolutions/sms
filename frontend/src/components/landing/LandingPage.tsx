@@ -235,11 +235,11 @@ function HeroSlideshow({ slides, autoPlay, hero, locale, ctaLink }: {
           {slide.imageUrl ? (
             <>
               <img src={slide.imageUrl} alt="" className="w-full h-full object-cover" />
-              <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, rgba(15,23,42,${opacity}) 0%, rgba(30,64,175,${opacity * 0.9}) 50%, rgba(67,56,202,${opacity * 0.8}) 100%)` }} />
+              <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, rgba(15,23,42,${opacity}) 0%, rgba(88,28,135,${opacity * 0.9}) 50%, rgba(192,38,211,${opacity * 0.7}) 100%)` }} />
             </>
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
-              <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(59,130,246,0.4) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(99,102,241,0.4) 0%, transparent 50%)' }} />
+            <div className="w-full h-full bg-gradient-to-br from-indigo-950 via-purple-900 to-fuchsia-900">
+              <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(168,85,247,0.5) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(236,72,153,0.4) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(59,130,246,0.3) 0%, transparent 60%)' }} />
             </div>
           )}
         </motion.div>
@@ -247,15 +247,17 @@ function HeroSlideshow({ slides, autoPlay, hero, locale, ctaLink }: {
 
       {/* Animated particles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(8)].map((_, i) => {
+          const colors = ['bg-fuchsia-400/10', 'bg-purple-400/10', 'bg-blue-400/10', 'bg-amber-400/10', 'bg-emerald-400/10', 'bg-rose-400/10', 'bg-cyan-400/10', 'bg-violet-400/10'];
+          return (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-white/5"
-            style={{ width: 80 + i * 40, height: 80 + i * 40, left: `${10 + i * 15}%`, top: `${20 + (i % 3) * 25}%` }}
-            animate={{ y: [0, -30, 0], x: [0, 15, 0], scale: [1, 1.1, 1] }}
-            transition={{ duration: 6 + i * 2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
+            className={`absolute rounded-full ${colors[i % colors.length]}`}
+            style={{ width: 60 + i * 35, height: 60 + i * 35, left: `${8 + i * 12}%`, top: `${15 + (i % 4) * 20}%` }}
+            animate={{ y: [0, -30, 0], x: [0, 15, 0], scale: [1, 1.15, 1], rotate: [0, 180, 360] }}
+            transition={{ duration: 8 + i * 2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}
           />
-        ))}
+        )})}
       </div>
 
       {/* Grid overlay */}
@@ -280,7 +282,7 @@ function HeroSlideshow({ slides, autoPlay, hero, locale, ctaLink }: {
               transition={{ delay: 0.2, duration: 0.5 }}
             >
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-medium text-blue-200">{locale === 'bn' ? 'ভর্তি চলছে' : 'Admissions Open'}</span>
+              <span className="text-xs font-medium text-fuchsia-200">{locale === 'bn' ? 'ভর্তি চলছে' : 'Admissions Open'}</span>
             </motion.div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
@@ -294,9 +296,9 @@ function HeroSlideshow({ slides, autoPlay, hero, locale, ctaLink }: {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <Link href={ctaLink} className="group inline-flex items-center gap-2.5 rounded-2xl bg-white px-7 py-3.5 text-base font-bold text-blue-700 shadow-xl shadow-blue-900/20 hover:shadow-2xl hover:-translate-y-0.5 transition-all">
+              <Link href={ctaLink} className="group inline-flex items-center gap-2.5 rounded-2xl bg-gradient-to-r from-white to-fuchsia-50 px-7 py-3.5 text-base font-bold text-purple-700 shadow-xl shadow-purple-900/30 hover:shadow-2xl hover:-translate-y-0.5 transition-all">
                 {hero?.ctaText || 'Login to Portal'}
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1 text-fuchsia-600" />
               </Link>
             </motion.div>
           </motion.div>
@@ -338,12 +340,13 @@ function GallerySection({ gallery, locale }: { gallery: NonNullable<LandingData[
   const subtitle = locale === 'bn' && gallery.subtitle_bn ? gallery.subtitle_bn : (gallery.subtitle || '');
 
   return (
-    <MotionSection id="gallery" className="scroll-mt-20 py-20 sm:py-28 bg-gradient-to-b from-white via-slate-50/50 to-white" variant={fadeInUp}>
+    <MotionSection id="gallery" className="scroll-mt-20 py-20 sm:py-28 bg-gradient-to-b from-white via-cyan-50/30 to-white relative overflow-hidden" variant={fadeInUp}>
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-teal-200/20 to-cyan-200/20 rounded-full blur-3xl" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <motion.div className="text-center max-w-2xl mx-auto mb-14" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 mb-4">
-            <Camera className="h-4 w-4 text-teal-600" />
-            <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider">{locale === 'bn' ? 'গ্যালারি' : 'Gallery'}</span>
+          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-100 to-cyan-100 px-4 py-1.5 mb-4 border border-teal-200/50">
+            <Camera className="h-4 w-4 text-teal-700" />
+            <span className="text-xs font-semibold text-teal-700 uppercase tracking-wider">{locale === 'bn' ? 'গ্যালারি' : 'Gallery'}</span>
           </motion.div>
           <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl font-extrabold text-slate-900">{heading}</motion.h2>
           {subtitle && <motion.p variants={fadeInUp} className="mt-4 text-lg text-slate-600">{subtitle}</motion.p>}
@@ -430,16 +433,17 @@ function TestimonialsSection({ testimonials, locale }: { testimonials: NonNullab
   const t = items[current];
 
   return (
-    <MotionSection className="py-20 sm:py-28 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden" variant={fadeInUp}>
+    <MotionSection className="py-20 sm:py-28 bg-gradient-to-br from-violet-50 via-fuchsia-50 to-rose-50 relative overflow-hidden" variant={fadeInUp}>
       {/* Decorative */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-fuchsia-200/30 to-purple-200/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-violet-200/30 to-indigo-200/20 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-amber-200/15 to-rose-200/15 rounded-full blur-3xl" />
 
       <div className="mx-auto max-w-4xl px-4 sm:px-6 relative z-10">
         <motion.div className="text-center mb-12" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-1.5 mb-4">
-            <Quote className="h-4 w-4 text-purple-600" />
-            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wider">{locale === 'bn' ? 'মতামত' : 'Testimonials'}</span>
+          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-200/80 to-fuchsia-200/80 px-4 py-1.5 mb-4 border border-purple-300/50">
+            <Quote className="h-4 w-4 text-purple-700" />
+            <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">{locale === 'bn' ? 'মতামত' : 'Testimonials'}</span>
           </motion.div>
           <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl font-extrabold text-slate-900">{heading}</motion.h2>
         </motion.div>
@@ -452,15 +456,15 @@ function TestimonialsSection({ testimonials, locale }: { testimonials: NonNullab
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: dir > 0 ? -100 : 100 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-3xl bg-white/80 backdrop-blur-sm p-8 sm:p-10 shadow-xl shadow-indigo-100/50 border border-white/80 text-center"
+              className="rounded-3xl bg-white/90 backdrop-blur-md p-8 sm:p-10 shadow-xl shadow-purple-200/40 border border-purple-100/50 text-center"
             >
-              <Quote className="mx-auto h-10 w-10 text-indigo-200 mb-6" />
+              <Quote className="mx-auto h-10 w-10 text-fuchsia-300 mb-6" />
               <p className="text-lg sm:text-xl text-slate-700 leading-relaxed italic max-w-2xl mx-auto">
                 &ldquo;{locale === 'bn' && t.text_bn ? t.text_bn : (t.text || '')}&rdquo;
               </p>
               <div className="mt-6 flex flex-col items-center gap-3">
                 {t.imageUrl && (
-                  <img src={t.imageUrl} alt="" className="h-14 w-14 rounded-full object-cover ring-4 ring-indigo-100" />
+                  <img src={t.imageUrl} alt="" className="h-14 w-14 rounded-full object-cover ring-4 ring-purple-200" />
                 )}
                 <div>
                   <p className="font-bold text-slate-800">{locale === 'bn' && t.name_bn ? t.name_bn : (t.name || '')}</p>
@@ -478,13 +482,13 @@ function TestimonialsSection({ testimonials, locale }: { testimonials: NonNullab
 
         {items.length > 1 && (
           <div className="flex justify-center gap-3 mt-8">
-            <button onClick={() => go(current - 1, -1)} className="rounded-full bg-white p-2.5 shadow-md text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all"><ChevronLeft className="h-5 w-5" /></button>
+            <button onClick={() => go(current - 1, -1)} className="rounded-full bg-white p-2.5 shadow-md text-purple-600 hover:bg-purple-50 hover:text-fuchsia-600 hover:shadow-lg hover:shadow-purple-100/50 transition-all"><ChevronLeft className="h-5 w-5" /></button>
             <div className="flex items-center gap-2">
               {items.map((_, i) => (
-                <button key={i} onClick={() => go(i, i > current ? 1 : -1)} className={`h-2.5 rounded-full transition-all duration-500 ${i === current ? 'w-8 bg-indigo-600' : 'w-2.5 bg-slate-300 hover:bg-slate-400'}`} />
+                <button key={i} onClick={() => go(i, i > current ? 1 : -1)} className={`h-2.5 rounded-full transition-all duration-500 ${i === current ? 'w-8 bg-gradient-to-r from-purple-600 to-fuchsia-600' : 'w-2.5 bg-purple-300 hover:bg-purple-400'}`} />
               ))}
             </div>
-            <button onClick={() => go(current + 1, 1)} className="rounded-full bg-white p-2.5 shadow-md text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all"><ChevronRight className="h-5 w-5" /></button>
+            <button onClick={() => go(current + 1, 1)} className="rounded-full bg-white p-2.5 shadow-md text-purple-600 hover:bg-purple-50 hover:text-fuchsia-600 hover:shadow-lg hover:shadow-purple-100/50 transition-all"><ChevronRight className="h-5 w-5" /></button>
           </div>
         )}
       </div>
@@ -584,14 +588,14 @@ export default function LandingPage() {
       {/* ════════════ TOP BAR ════════════ */}
       {showTopBar && (topBarLeft || topBarRight) && (
         <motion.div
-          className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-slate-300"
+          className="bg-gradient-to-r from-indigo-900 via-purple-900 to-fuchsia-900 text-indigo-200"
           initial={{ y: -40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
           <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-2 px-4 py-2 text-xs sm:text-sm sm:px-6">
-            <div className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-blue-400" /><span>{topBarLeft}</span></div>
-            <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-blue-400" /><span>{topBarRight}</span></div>
+            <div className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-fuchsia-400" /><span>{topBarLeft}</span></div>
+            <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-amber-400" /><span>{topBarRight}</span></div>
           </div>
         </motion.div>
       )}
@@ -608,11 +612,11 @@ export default function LandingPage() {
             {site.logoUrl ? (
               <motion.img src={site.logoUrl} alt="" className="h-10 w-auto max-h-12 object-contain" whileHover={{ scale: 1.05 }} />
             ) : (
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-md">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-fuchsia-600 via-purple-600 to-indigo-600 flex items-center justify-center shadow-md shadow-purple-500/30">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
             )}
-            <span className="hidden sm:block text-lg font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">{schoolName}</span>
+            <span className="hidden sm:block text-lg font-bold bg-gradient-to-r from-indigo-700 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent">{schoolName}</span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
@@ -620,20 +624,20 @@ export default function LandingPage() {
               const href = link.href?.startsWith('http') ? link.href : (link.href?.startsWith('/') ? `/${locale}${link.href}` : link.href ?? '#');
               const label = locale === 'bn' && link.label_bn ? link.label_bn : (link.label ?? '');
               return (
-                <motion.a key={i} href={href} className="relative px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:text-blue-600 hover:bg-blue-50/80 transition-all group"
+                <motion.a key={i} href={href} className="relative px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:text-purple-600 hover:bg-purple-50/80 transition-all group"
                   whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   {label}
-                  <span className="absolute bottom-0 left-1/2 h-0.5 w-0 bg-blue-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-[12.5%]" />
+                  <span className="absolute bottom-0 left-1/2 h-0.5 w-0 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-full transition-all duration-300 group-hover:w-3/4 group-hover:left-[12.5%]" />
                 </motion.a>
               );
             })}
           </nav>
 
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => refetch()} disabled={isFetching} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-blue-600 transition" title="Refresh">
+            <button type="button" onClick={() => refetch()} disabled={isFetching} className="rounded-lg p-2 text-slate-400 hover:bg-purple-50 hover:text-purple-600 transition" title="Refresh">
               <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
             </button>
-            <Link href={`/${locale}/login`} className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/25 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+            <Link href={`/${locale}/login`} className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-500/30 hover:shadow-lg hover:shadow-purple-500/40 hover:-translate-y-0.5 transition-all">
               {locale === 'bn' ? 'লগইন' : 'Login'}<ArrowRight className="h-4 w-4" />
             </Link>
             <button type="button" className="lg:hidden rounded-lg p-2 text-slate-600 hover:bg-slate-100 transition" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -657,7 +661,7 @@ export default function LandingPage() {
                   const label = locale === 'bn' && link.label_bn ? link.label_bn : (link.label ?? '');
                   return <a key={i} href={href} onClick={() => setMobileMenuOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition">{label}</a>;
                 })}
-                <Link href={`/${locale}/login`} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white mt-2">
+                <Link href={`/${locale}/login`} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white mt-2">
                   {locale === 'bn' ? 'লগইন' : 'Login'} <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
@@ -676,10 +680,10 @@ export default function LandingPage() {
             {(site.bannerImageUrl || hero.imageUrl) ? (
               <>
                 <img src={site.bannerImageUrl || hero.imageUrl} alt="" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-blue-900/80 to-indigo-900/70" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-purple-900/80 to-fuchsia-900/70" />
               </>
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900" />
+              <div className="w-full h-full bg-gradient-to-br from-slate-900 via-purple-900 to-fuchsia-900" />
             )}
           </div>
           <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-28 w-full">
@@ -704,7 +708,7 @@ export default function LandingPage() {
         <MotionSection className="relative -mt-6 z-20 scroll-mt-20" variant={fadeInUp}>
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <motion.div
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 rounded-2xl bg-white p-6 shadow-xl shadow-slate-200/50 border border-slate-100"
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 p-6 sm:p-8 shadow-2xl shadow-purple-500/25 border border-purple-400/20"
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
@@ -712,13 +716,13 @@ export default function LandingPage() {
             >
               {statsItems.map((stat, i) => {
                 const SIcon = iconMap[stat.icon ?? 'Users'] ?? Users;
-                const colors = ['text-blue-600 bg-blue-50', 'text-indigo-600 bg-indigo-50', 'text-emerald-600 bg-emerald-50', 'text-amber-600 bg-amber-50', 'text-rose-600 bg-rose-50', 'text-violet-600 bg-violet-50'];
+                const colors = ['text-amber-300 bg-white/15', 'text-emerald-300 bg-white/15', 'text-cyan-300 bg-white/15', 'text-rose-300 bg-white/15', 'text-fuchsia-300 bg-white/15', 'text-violet-300 bg-white/15'];
                 return (
                   <motion.div key={i} variants={scaleIn} className="flex items-center gap-3 sm:gap-4">
-                    <div className={`shrink-0 rounded-xl p-2.5 ${colors[i % colors.length]}`}><SIcon className="h-5 w-5 sm:h-6 sm:w-6" /></div>
+                    <div className={`shrink-0 rounded-xl p-2.5 backdrop-blur-sm ${colors[i % colors.length]}`}><SIcon className="h-5 w-5 sm:h-6 sm:w-6" /></div>
                     <div>
-                      <p className="text-xl sm:text-2xl font-extrabold text-slate-800"><AnimatedCounter target={stat.value ?? 0} suffix={stat.suffix ?? ''} /></p>
-                      <p className="text-xs sm:text-sm text-slate-500">{locale === 'bn' && stat.label_bn ? stat.label_bn : (stat.label ?? '')}</p>
+                      <p className="text-xl sm:text-2xl font-extrabold text-white"><AnimatedCounter target={stat.value ?? 0} suffix={stat.suffix ?? ''} /></p>
+                      <p className="text-xs sm:text-sm text-purple-100/80">{locale === 'bn' && stat.label_bn ? stat.label_bn : (stat.label ?? '')}</p>
                     </div>
                   </motion.div>
                 );
@@ -729,19 +733,23 @@ export default function LandingPage() {
       )}
 
       {/* ════════════ ABOUT ════════════ */}
-      <MotionSection id="about" className="scroll-mt-20 py-20 sm:py-28" variant={fadeInUp}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <MotionSection id="about" className="scroll-mt-20 py-20 sm:py-28 relative overflow-hidden" variant={fadeInUp}>
+        {/* Decorative background blobs */}
+        <div className="absolute top-20 -left-40 w-80 h-80 bg-gradient-to-br from-purple-200/40 to-fuchsia-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 -right-40 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-cyan-200/30 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-amber-100/20 to-rose-100/20 rounded-full blur-3xl" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <motion.div variants={fadeInLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 mb-4">
-                <Globe className="h-4 w-4 text-blue-600" />
-                <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">{locale === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}</span>
+              <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-100 to-fuchsia-100 px-4 py-1.5 mb-4 border border-purple-200/50">
+                <Globe className="h-4 w-4 text-purple-600" />
+                <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">{locale === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">{locale === 'bn' && about.heading_bn ? about.heading_bn : (about.heading || 'About Our School')}</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-slate-900 via-purple-900 to-fuchsia-900 bg-clip-text text-transparent leading-tight">{locale === 'bn' && about.heading_bn ? about.heading_bn : (about.heading || 'About Our School')}</h2>
               <p className="mt-5 text-lg text-slate-600 leading-relaxed">{locale === 'bn' && about.body_bn ? about.body_bn : (about.body || '')}</p>
               <div className="mt-8 grid grid-cols-2 gap-4">
-                {[{ icon: Target, label: locale === 'bn' ? 'দূরদৃষ্টি' : 'Our Vision', color: 'text-blue-600 bg-blue-50' }, { icon: Heart, label: locale === 'bn' ? 'মূল্যবোধ' : 'Our Values', color: 'text-rose-600 bg-rose-50' }].map((item, i) => (
-                  <motion.div key={i} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 hover:border-blue-200 hover:shadow-sm transition-all" whileHover={{ scale: 1.03 }}>
+                {[{ icon: Target, label: locale === 'bn' ? 'দূরদৃষ্টি' : 'Our Vision', color: 'text-indigo-600 bg-gradient-to-br from-indigo-50 to-purple-50' }, { icon: Heart, label: locale === 'bn' ? 'মূল্যবোধ' : 'Our Values', color: 'text-rose-600 bg-gradient-to-br from-rose-50 to-pink-50' }].map((item, i) => (
+                  <motion.div key={i} className="flex items-center gap-3 rounded-xl border border-purple-200/50 bg-white/80 backdrop-blur-sm p-3 hover:border-purple-300 hover:shadow-md hover:shadow-purple-100/50 transition-all" whileHover={{ scale: 1.03 }}>
                     <div className={`rounded-lg p-2 ${item.color}`}><item.icon className="h-4 w-4" /></div>
                     <span className="text-sm font-medium text-slate-700">{item.label}</span>
                   </motion.div>
@@ -756,8 +764,8 @@ export default function LandingPage() {
                   <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl" />
                 </div>
               ) : (
-                <div className="relative rounded-2xl bg-gradient-to-br from-blue-100 via-indigo-50 to-slate-100 h-80 sm:h-96 flex items-center justify-center overflow-hidden">
-                  <GraduationCap className="h-24 w-24 text-blue-300/50" />
+                <div className="relative rounded-2xl bg-gradient-to-br from-purple-100 via-fuchsia-50 to-pink-100 h-80 sm:h-96 flex items-center justify-center overflow-hidden">
+                  <GraduationCap className="h-24 w-24 text-purple-300/50" />
                 </div>
               )}
 
@@ -791,18 +799,21 @@ export default function LandingPage() {
 
       {/* ════════════ ACADEMIC INFO ════════════ */}
       {academic.enabled !== false && (
-        <MotionSection id="academic" className="scroll-mt-20 py-20 sm:py-28 bg-gradient-to-b from-slate-50 to-white" variant={fadeInUp}>
+        <MotionSection id="academic" className="scroll-mt-20 py-20 sm:py-28 bg-gradient-to-b from-violet-50 via-indigo-50/50 to-white relative overflow-hidden" variant={fadeInUp}>
+          {/* Decorative shapes */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-violet-200/30 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-indigo-200/30 to-transparent rounded-full blur-3xl" />
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <motion.div className="text-center max-w-2xl mx-auto mb-12" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-1.5 mb-4"><BookOpen className="h-4 w-4 text-indigo-600" /><span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">{locale === 'bn' ? 'একাডেমিক' : 'Academics'}</span></motion.div>
+              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-100 to-violet-100 px-4 py-1.5 mb-4 border border-indigo-200/50"><BookOpen className="h-4 w-4 text-indigo-600" /><span className="text-xs font-semibold text-indigo-700 uppercase tracking-wider">{locale === 'bn' ? 'একাডেমিক' : 'Academics'}</span></motion.div>
               <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl font-extrabold text-slate-900">{locale === 'bn' && academic.heading_bn ? academic.heading_bn : (academic.heading || 'Academic Information')}</motion.h2>
               {(academic.body || academic.body_bn) && <motion.p variants={fadeInUp} className="mt-4 text-lg text-slate-600">{locale === 'bn' && academic.body_bn ? academic.body_bn : academic.body}</motion.p>}
             </motion.div>
             {(academic.highlights ?? []).length > 0 && (
               <motion.div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 {(academic.highlights ?? []).map((h, i) => (
-                  <motion.div key={i} variants={fadeInUp} className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-indigo-200 hover:shadow-lg transition-all duration-300" whileHover={{ y: -6 }}>
-                    <div className="h-1 w-12 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 mb-4 group-hover:w-20 transition-all duration-300" />
+                  <motion.div key={i} variants={fadeInUp} className="group rounded-2xl border border-violet-200/50 bg-white/80 backdrop-blur-sm p-6 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300" whileHover={{ y: -6 }}>
+                    <div className="h-1 w-12 rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500 mb-4 group-hover:w-20 transition-all duration-300" />
                     <h3 className="text-lg font-bold text-slate-800">{locale === 'bn' && h.title_bn ? h.title_bn : (h.title ?? '')}</h3>
                     <p className="mt-2 text-slate-600">{h.desc ?? ''}</p>
                   </motion.div>
@@ -818,7 +829,7 @@ export default function LandingPage() {
         <MotionSection id="admission" className="scroll-mt-20 py-20 sm:py-28" variant={fadeInUp}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <motion.div
-              className="rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden relative"
+              className="rounded-3xl bg-gradient-to-br from-violet-600 via-purple-700 to-fuchsia-800 overflow-hidden relative"
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7 }}
@@ -827,9 +838,9 @@ export default function LandingPage() {
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 80%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
               <div className="relative p-8 sm:p-12 lg:p-16">
                 <div className="max-w-3xl">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-1.5 mb-5 border border-white/20"><FileText className="h-4 w-4 text-blue-200" /><span className="text-xs font-semibold text-blue-100 uppercase tracking-wider">{locale === 'bn' ? 'ভর্তি' : 'Admission'}</span></div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-1.5 mb-5 border border-white/20"><FileText className="h-4 w-4 text-fuchsia-200" /><span className="text-xs font-semibold text-fuchsia-100 uppercase tracking-wider">{locale === 'bn' ? 'ভর্তি' : 'Admission'}</span></div>
                   <h2 className="text-3xl sm:text-4xl font-extrabold text-white">{locale === 'bn' && admission.heading_bn ? admission.heading_bn : (admission.heading || 'Admission')}</h2>
-                  <p className="mt-4 text-lg text-blue-100/90">{locale === 'bn' && admission.body_bn ? admission.body_bn : (admission.body || '')}</p>
+                  <p className="mt-4 text-lg text-purple-100/90">{locale === 'bn' && admission.body_bn ? admission.body_bn : (admission.body || '')}</p>
                   <div className="mt-8 space-y-6">
                     {(admission.requirements || admission.requirements_bn) && (
                       <motion.div className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 p-6" whileHover={{ scale: 1.02 }}>
@@ -853,23 +864,28 @@ export default function LandingPage() {
 
       {/* ════════════ FEATURES ════════════ */}
       {features.length > 0 && (
-        <MotionSection className="py-20 sm:py-28 bg-gradient-to-b from-white via-slate-50/50 to-white" variant={fadeInUp}>
+        <MotionSection className="py-20 sm:py-28 bg-gradient-to-b from-white via-amber-50/30 to-white relative overflow-hidden" variant={fadeInUp}>
+          {/* Decorative */}
+          <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-br from-amber-200/20 to-orange-200/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-72 h-72 bg-gradient-to-br from-emerald-200/20 to-teal-200/20 rounded-full blur-3xl" />
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <motion.div className="text-center max-w-2xl mx-auto mb-14" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 mb-4"><Star className="h-4 w-4 text-emerald-600" /><span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">{locale === 'bn' ? 'সুবিধা' : 'Features'}</span></motion.div>
+              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 px-4 py-1.5 mb-4 border border-emerald-200/50"><Star className="h-4 w-4 text-emerald-600" /><span className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">{locale === 'bn' ? 'সুবিধা' : 'Features'}</span></motion.div>
               <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl font-extrabold text-slate-900">{locale === 'bn' ? 'আমাদের সুবিধা' : 'Why Choose Us'}</motion.h2>
             </motion.div>
-            <motion.div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 relative z-10" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               {features.map((f, i) => {
                 const Icon = iconMap[f.icon ?? ''] ?? GraduationCap;
-                const colors = ['from-blue-500 to-blue-600', 'from-emerald-500 to-emerald-600', 'from-purple-500 to-purple-600', 'from-amber-500 to-amber-600', 'from-rose-500 to-rose-600', 'from-teal-500 to-teal-600'];
+                const colors = ['from-blue-500 to-cyan-500', 'from-emerald-500 to-teal-500', 'from-purple-500 to-fuchsia-500', 'from-amber-500 to-orange-500', 'from-rose-500 to-pink-500', 'from-violet-500 to-indigo-500'];
+                const borderColors = ['hover:border-blue-300', 'hover:border-emerald-300', 'hover:border-purple-300', 'hover:border-amber-300', 'hover:border-rose-300', 'hover:border-violet-300'];
+                const shadowColors = ['hover:shadow-blue-100/50', 'hover:shadow-emerald-100/50', 'hover:shadow-purple-100/50', 'hover:shadow-amber-100/50', 'hover:shadow-rose-100/50', 'hover:shadow-violet-100/50'];
                 return (
-                  <motion.div key={i} variants={fadeInUp} className="group relative rounded-2xl border border-slate-200 bg-white p-7 hover:border-transparent hover:shadow-xl transition-all overflow-hidden" whileHover={{ y: -8, transition: { duration: 0.3 } }}>
-                    <motion.div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <motion.div key={i} variants={fadeInUp} className={`group relative rounded-2xl border border-slate-200/80 bg-white/90 backdrop-blur-sm p-7 ${borderColors[i % borderColors.length]} ${shadowColors[i % shadowColors.length]} hover:shadow-xl transition-all overflow-hidden`} whileHover={{ y: -8, transition: { duration: 0.3 } }}>
+                    <motion.div className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${colors[i % colors.length]} opacity-0 group-hover:opacity-100 transition-opacity`} />
                     <div className={`inline-flex rounded-2xl bg-gradient-to-br ${colors[i % colors.length]} p-3.5 text-white shadow-lg`}><Icon className="h-6 w-6" /></div>
                     <h3 className="mt-5 text-lg font-bold text-slate-800">{locale === 'bn' && f.title_bn ? f.title_bn : (f.title ?? '')}</h3>
                     <p className="mt-2 text-slate-600 leading-relaxed">{f.description ?? ''}</p>
-                    <div className="mt-4 flex items-center gap-1 text-sm font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-4 flex items-center gap-1 text-sm font-medium text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">
                       {locale === 'bn' ? 'বিস্তারিত' : 'Learn more'} <ChevronRight className="h-4 w-4" />
                     </div>
                   </motion.div>
@@ -888,18 +904,19 @@ export default function LandingPage() {
 
       {/* ════════════ NEWS & EVENTS ════════════ */}
       {showNotices && (
-        <MotionSection id="news" className="scroll-mt-20 py-20 sm:py-28 bg-gradient-to-b from-slate-50 to-white" variant={fadeInUp}>
+        <MotionSection id="news" className="scroll-mt-20 py-20 sm:py-28 bg-gradient-to-b from-orange-50/50 via-amber-50/30 to-white relative overflow-hidden" variant={fadeInUp}>
+          <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-amber-200/20 to-transparent rounded-full blur-3xl" />
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <motion.div className="mb-10" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-1.5 mb-4"><Megaphone className="h-4 w-4 text-amber-600" /><span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">{locale === 'bn' ? 'সংবাদ' : 'News'}</span></motion.div>
+              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-1.5 mb-4 border border-amber-200/50"><Megaphone className="h-4 w-4 text-amber-600" /><span className="text-xs font-semibold text-amber-700 uppercase tracking-wider">{locale === 'bn' ? 'সংবাদ' : 'News'}</span></motion.div>
               <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl font-extrabold text-slate-900">{noticeTitle}</motion.h2>
             </motion.div>
             <motion.div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               {notices.slice(0, noticesConfig.maxItems ?? 5).map((n, i) => (
-                <motion.div key={n.id} variants={fadeInUp} className="group rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all" whileHover={{ y: -6 }}>
-                  <div className={`h-1.5 w-full bg-gradient-to-r ${['from-blue-500 to-indigo-500', 'from-emerald-500 to-teal-500', 'from-amber-500 to-orange-500'][i % 3]}`} />
+                <motion.div key={n.id} variants={fadeInUp} className="group rounded-2xl border border-amber-200/50 bg-white/90 backdrop-blur-sm overflow-hidden hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/30 transition-all" whileHover={{ y: -6 }}>
+                  <div className={`h-1.5 w-full bg-gradient-to-r ${['from-violet-500 to-fuchsia-500', 'from-emerald-500 to-cyan-500', 'from-amber-500 to-rose-500'][i % 3]}`} />
                   <div className="p-5 sm:p-6">
-                    <h3 className="font-bold text-slate-800 group-hover:text-blue-700 transition-colors line-clamp-2">{locale === 'bn' && n.title_bn ? n.title_bn : n.title}</h3>
+                    <h3 className="font-bold text-slate-800 group-hover:text-purple-700 transition-colors line-clamp-2">{locale === 'bn' && n.title_bn ? n.title_bn : n.title}</h3>
                     {n.body && <p className="mt-2 text-sm text-slate-500 line-clamp-3">{n.body}</p>}
                     {n.published_at && (
                       <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-400">
@@ -917,58 +934,61 @@ export default function LandingPage() {
 
       {/* ════════════ CONTACT ════════════ */}
       {contact.showSection !== false && (
-        <MotionSection id="contact" className="scroll-mt-20 py-20 sm:py-28" variant={fadeInUp}>
+        <MotionSection id="contact" className="scroll-mt-20 py-20 sm:py-28 relative overflow-hidden" variant={fadeInUp}>
+          {/* Decorative background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-50/50 via-white to-fuchsia-50/30" />
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-gradient-to-br from-purple-200/20 to-fuchsia-200/20 rounded-full blur-3xl" />
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <motion.div className="text-center max-w-2xl mx-auto mb-12" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 mb-4"><Mail className="h-4 w-4 text-blue-600" /><span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">{locale === 'bn' ? 'যোগাযোগ' : 'Contact'}</span></motion.div>
-              <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl font-extrabold text-slate-900">{locale === 'bn' ? 'যোগাযোগ করুন' : 'Get in Touch'}</motion.h2>
+            <motion.div className="text-center max-w-2xl mx-auto mb-12 relative z-10" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-100 to-fuchsia-100 px-4 py-1.5 mb-4 border border-violet-200/50"><Mail className="h-4 w-4 text-violet-600" /><span className="text-xs font-semibold text-violet-700 uppercase tracking-wider">{locale === 'bn' ? 'যোগাযোগ' : 'Contact'}</span></motion.div>
+              <motion.h2 variants={fadeInUp} className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-slate-900 via-purple-900 to-fuchsia-800 bg-clip-text text-transparent">{locale === 'bn' ? 'যোগাযোগ করুন' : 'Get in Touch'}</motion.h2>
             </motion.div>
-            <div className="grid gap-8 lg:grid-cols-5">
+            <div className="grid gap-8 lg:grid-cols-5 relative z-10">
               <motion.div className="lg:col-span-2 space-y-4" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 {contact.email && (
-                  <motion.a href={`mailto:${contact.email}`} variants={fadeInLeft} className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 hover:border-blue-200 hover:shadow-lg transition-all" whileHover={{ x: 4 }}>
-                    <div className="rounded-xl bg-blue-50 p-3 group-hover:bg-blue-100 transition-colors"><Mail className="h-5 w-5 text-blue-600" /></div>
-                    <div><p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{locale === 'bn' ? 'ইমেইল' : 'Email'}</p><p className="font-semibold text-slate-700 group-hover:text-blue-600 transition-colors">{contact.email}</p></div>
+                  <motion.a href={`mailto:${contact.email}`} variants={fadeInLeft} className="group flex items-center gap-4 rounded-2xl border border-violet-200/50 bg-white/90 backdrop-blur-sm p-5 hover:border-violet-300 hover:shadow-lg hover:shadow-violet-100/50 transition-all" whileHover={{ x: 4 }}>
+                    <div className="rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 p-3 group-hover:from-violet-200 group-hover:to-purple-200 transition-colors"><Mail className="h-5 w-5 text-violet-600" /></div>
+                    <div><p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{locale === 'bn' ? 'ইমেইল' : 'Email'}</p><p className="font-semibold text-slate-700 group-hover:text-violet-600 transition-colors">{contact.email}</p></div>
                   </motion.a>
                 )}
                 {contact.phone && (
-                  <motion.a href={`tel:${contact.phone}`} variants={fadeInLeft} className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 hover:border-emerald-200 hover:shadow-lg transition-all" whileHover={{ x: 4 }}>
+                  <motion.a href={`tel:${contact.phone}`} variants={fadeInLeft} className="group flex items-center gap-4 rounded-2xl border border-emerald-200/50 bg-white/90 backdrop-blur-sm p-5 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 transition-all" whileHover={{ x: 4 }}>
                     <div className="rounded-xl bg-emerald-50 p-3 group-hover:bg-emerald-100 transition-colors"><Phone className="h-5 w-5 text-emerald-600" /></div>
                     <div><p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{locale === 'bn' ? 'ফোন' : 'Phone'}</p><p className="font-semibold text-slate-700 group-hover:text-emerald-600 transition-colors">{contact.phone}</p></div>
                   </motion.a>
                 )}
                 {(contact.address || contact.address_bn) && (
-                  <motion.div variants={fadeInLeft} className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5">
-                    <div className="rounded-xl bg-rose-50 p-3"><MapPin className="h-5 w-5 text-rose-600" /></div>
+                  <motion.div variants={fadeInLeft} className="flex items-center gap-4 rounded-2xl border border-rose-200/50 bg-white/90 backdrop-blur-sm p-5">
+                    <div className="rounded-xl bg-gradient-to-br from-rose-100 to-pink-100 p-3"><MapPin className="h-5 w-5 text-rose-600" /></div>
                     <div><p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{locale === 'bn' ? 'ঠিকানা' : 'Address'}</p><p className="font-semibold text-slate-700">{locale === 'bn' && contact.address_bn ? contact.address_bn : contact.address}</p></div>
                   </motion.div>
                 )}
                 {contact.mapEmbed && <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 aspect-video" dangerouslySetInnerHTML={{ __html: contact.mapEmbed }} />}
               </motion.div>
               {showContactForm && (
-                <motion.div className="lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm" variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <motion.div className="lg:col-span-3 rounded-2xl border border-violet-200/30 bg-white/90 backdrop-blur-sm p-6 sm:p-8 shadow-lg shadow-violet-100/20" variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                   <h3 className="text-xl font-bold text-slate-800 mb-1">{locale === 'bn' ? 'আমাদের কাছে বার্তা পাঠান' : 'Send us a message'}</h3>
                   <p className="text-sm text-slate-500 mb-6">{locale === 'bn' ? 'আপনার বার্তা স্কুলের ইমেইলে পাঠানো হবে।' : "Your message will be sent to the school's email."}</p>
                   <form onSubmit={handleContactSubmit} className="space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1.5">{locale === 'bn' ? 'নাম' : 'Name'}</label>
-                        <input type="text" required value={contactForm.name} onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:bg-white outline-none transition" />
+                        <input type="text" required value={contactForm.name} onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))} className="w-full rounded-xl border border-violet-200/50 bg-violet-50/30 px-4 py-3 text-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-100 focus:bg-white outline-none transition" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1.5">{locale === 'bn' ? 'ইমেইল' : 'Email'}</label>
-                        <input type="email" required value={contactForm.email} onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:bg-white outline-none transition" />
+                        <input type="email" required value={contactForm.email} onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))} className="w-full rounded-xl border border-violet-200/50 bg-violet-50/30 px-4 py-3 text-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-100 focus:bg-white outline-none transition" />
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1.5">{locale === 'bn' ? 'বিষয়' : 'Subject'}</label>
-                      <input type="text" required value={contactForm.subject} onChange={e => setContactForm(f => ({ ...f, subject: e.target.value }))} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:bg-white outline-none transition" />
+                      <input type="text" required value={contactForm.subject} onChange={e => setContactForm(f => ({ ...f, subject: e.target.value }))} className="w-full rounded-xl border border-violet-200/50 bg-violet-50/30 px-4 py-3 text-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-100 focus:bg-white outline-none transition" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1.5">{locale === 'bn' ? 'বার্তা' : 'Message'}</label>
-                      <textarea required rows={4} value={contactForm.message} onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 focus:bg-white outline-none transition resize-none" />
+                      <textarea required rows={4} value={contactForm.message} onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))} className="w-full rounded-xl border border-violet-200/50 bg-violet-50/30 px-4 py-3 text-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-100 focus:bg-white outline-none transition resize-none" />
                     </div>
-                    <motion.button type="submit" disabled={contactSubmitting} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50" whileTap={{ scale: 0.97 }}>
+                    <motion.button type="submit" disabled={contactSubmitting} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-purple-500/25 hover:shadow-lg hover:shadow-purple-500/40 hover:-translate-y-0.5 transition-all disabled:opacity-50" whileTap={{ scale: 0.97 }}>
                       {contactSubmitting ? 'Sending...' : (locale === 'bn' ? 'বার্তা পাঠান' : 'Send message')}<Send className="h-4 w-4" />
                     </motion.button>
                   </form>
@@ -980,23 +1000,27 @@ export default function LandingPage() {
       )}
 
       {/* ════════════ FOOTER ════════════ */}
-      <footer className="relative bg-slate-900 text-slate-400 overflow-hidden">
-        <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600" />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-16">
+      <footer className="relative bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 text-slate-400 overflow-hidden">
+        {/* Decorative top gradient line */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-500 via-purple-500 to-cyan-400" />
+        {/* Decorative blobs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-900/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-16 relative z-10">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div className="lg:col-span-1">
               <div className="flex items-center gap-3 mb-4">
-                {site.logoUrl ? <img src={site.logoUrl} alt="" className="h-9 w-auto max-h-10 object-contain brightness-0 invert opacity-80" /> : <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center"><GraduationCap className="h-5 w-5 text-white" /></div>}
+                {site.logoUrl ? <img src={site.logoUrl} alt="" className="h-9 w-auto max-h-10 object-contain brightness-0 invert opacity-80" /> : <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30"><GraduationCap className="h-5 w-5 text-white" /></div>}
                 <span className="text-lg font-bold text-white">{schoolName}</span>
               </div>
               <p className="text-sm leading-relaxed">{locale === 'bn' ? (footer.aboutText_bn ?? footer.aboutText) : (footer.aboutText ?? '')}</p>
               {hasSocialLinks && (
                 <div className="mt-5 flex gap-3">
-                  {footer.facebook && <a href={footer.facebook} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-slate-800 p-2 text-slate-400 hover:bg-blue-600 hover:text-white transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>}
-                  {footer.youtube && <a href={footer.youtube} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-slate-800 p-2 text-slate-400 hover:bg-red-600 hover:text-white transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>}
-                  {footer.twitter && <a href={footer.twitter} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-slate-800 p-2 text-slate-400 hover:bg-slate-700 hover:text-white transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>}
-                  {footer.instagram && <a href={footer.instagram} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-slate-800 p-2 text-slate-400 hover:bg-pink-600 hover:text-white transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>}
-                  {footer.linkedin && <a href={footer.linkedin} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-slate-800 p-2 text-slate-400 hover:bg-blue-700 hover:text-white transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>}
+                  {footer.facebook && <a href={footer.facebook} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white/10 backdrop-blur-sm p-2 text-slate-400 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/30 transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>}
+                  {footer.youtube && <a href={footer.youtube} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white/10 backdrop-blur-sm p-2 text-slate-400 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-500/30 transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>}
+                  {footer.twitter && <a href={footer.twitter} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white/10 backdrop-blur-sm p-2 text-slate-400 hover:bg-sky-500 hover:text-white hover:shadow-lg hover:shadow-sky-500/30 transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>}
+                  {footer.instagram && <a href={footer.instagram} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white/10 backdrop-blur-sm p-2 text-slate-400 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 hover:text-white hover:shadow-lg hover:shadow-pink-500/30 transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>}
+                  {footer.linkedin && <a href={footer.linkedin} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white/10 backdrop-blur-sm p-2 text-slate-400 hover:bg-blue-700 hover:text-white hover:shadow-lg hover:shadow-blue-700/30 transition-all"><svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>}
                 </div>
               )}
             </div>
@@ -1006,7 +1030,7 @@ export default function LandingPage() {
                 <ul className="space-y-2.5">
                   {quickLinks.map((link, i) => {
                     const href = link.href?.startsWith('http') ? link.href : (link.href?.startsWith('/') ? `/${locale}${link.href}` : link.href ?? '#');
-                    return <li key={i}><a href={href} className="group inline-flex items-center gap-1.5 text-sm hover:text-white transition-colors"><ChevronRight className="h-3 w-3 text-slate-600 group-hover:text-blue-400" />{locale === 'bn' && link.label_bn ? link.label_bn : (link.label ?? '')}</a></li>;
+                    return <li key={i}><a href={href} className="group inline-flex items-center gap-1.5 text-sm hover:text-white transition-colors"><ChevronRight className="h-3 w-3 text-purple-400/60 group-hover:text-fuchsia-400" />{locale === 'bn' && link.label_bn ? link.label_bn : (link.label ?? '')}</a></li>;
                   })}
                 </ul>
               </div>
@@ -1015,23 +1039,23 @@ export default function LandingPage() {
               <div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{locale === 'bn' ? (footer.contactTitle_bn ?? 'যোগাযোগ') : (footer.contactTitle ?? 'Contact Us')}</h3>
                 <div className="space-y-3 text-sm">
-                  {contact.email && <a href={`mailto:${contact.email}`} className="flex items-center gap-2.5 hover:text-white transition-colors"><Mail className="h-4 w-4 text-blue-400 shrink-0" />{contact.email}</a>}
+                  {contact.email && <a href={`mailto:${contact.email}`} className="flex items-center gap-2.5 hover:text-white transition-colors"><Mail className="h-4 w-4 text-violet-400 shrink-0" />{contact.email}</a>}
                   {contact.phone && <a href={`tel:${contact.phone}`} className="flex items-center gap-2.5 hover:text-white transition-colors"><Phone className="h-4 w-4 text-emerald-400 shrink-0" />{contact.phone}</a>}
-                  {(contact.address || contact.address_bn) && <div className="flex items-start gap-2.5"><MapPin className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" /><span>{locale === 'bn' && contact.address_bn ? contact.address_bn : contact.address}</span></div>}
+                  {(contact.address || contact.address_bn) && <div className="flex items-start gap-2.5"><MapPin className="h-4 w-4 text-fuchsia-400 shrink-0 mt-0.5" /><span>{locale === 'bn' && contact.address_bn ? contact.address_bn : contact.address}</span></div>}
                 </div>
               </div>
             )}
             <div>
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">{locale === 'bn' ? 'পোর্টালে যান' : 'Visit Portal'}</h3>
               <p className="text-sm mb-4">{locale === 'bn' ? 'অভিভাবক ও শিক্ষার্থীরা পোর্টালে লগইন করুন' : 'Parents and students can login to the portal'}</p>
-              <Link href={`/${locale}/login`} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:from-blue-500 hover:to-indigo-500 transition-all">
+              <Link href={`/${locale}/login`} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:from-fuchsia-500 hover:via-purple-500 hover:to-indigo-500 shadow-md shadow-purple-500/30 transition-all">
                 {locale === 'bn' ? 'লগইন করুন' : 'Login Now'} <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="mt-12 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-500">{footer.copyright ?? '© School. All rights reserved.'}</p>
-            <div className="flex items-center gap-1 text-xs text-slate-600"><span>{locale === 'bn' ? 'তৈরি করেছে' : 'Powered by'}</span><span className="font-medium text-slate-500">School Management System</span></div>
+            <div className="flex items-center gap-1 text-xs text-slate-600"><span>{locale === 'bn' ? 'তৈরি করেছে' : 'Powered by'}</span><span className="font-medium bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent">School Management System</span></div>
           </div>
         </div>
       </footer>
@@ -1041,7 +1065,7 @@ export default function LandingPage() {
         {showScrollTop && (
           <motion.button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-6 right-6 z-50 rounded-full bg-blue-600 p-3 text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-all"
+            className="fixed bottom-6 right-6 z-50 rounded-full bg-gradient-to-br from-fuchsia-600 via-purple-600 to-indigo-600 p-3 text-white shadow-lg shadow-purple-600/40 hover:shadow-xl hover:shadow-purple-500/50 transition-all"
             initial={{ opacity: 0, scale: 0, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0, y: 20 }}
