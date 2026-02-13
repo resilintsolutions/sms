@@ -1,7 +1,10 @@
+.git/
 node_modules/
 .next/
 out/
-.git/
 .env
 .env.local
+.env.*.local
 *.md
+.idea/
+.vscode/

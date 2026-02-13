@@ -1,11 +1,15 @@
-vendor/
-node_modules/
 .git/
 .env
+.env.*
+vendor/
+node_modules/
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
 storage/framework/views/*
 tests/
 phpunit.xml
+composer.phar
 *.md
+.idea/
+.vscode/
