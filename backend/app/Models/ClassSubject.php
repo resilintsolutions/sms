@@ -9,15 +9,13 @@ class ClassSubject extends Model
 {
     protected $fillable = ['class_id', 'subject_id', 'full_marks', 'pass_marks', 'weight', 'is_optional'];
 
-    protected function casts(): array
-    {
-        return [
-            'full_marks' => 'integer',
-            'pass_marks' => 'integer',
-            'weight' => 'float',
-            'is_optional' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'full_marks' => 'integer',
+        'pass_marks' => 'integer',
+        'weight' => 'float',
+        'is_optional' => 'boolean',
+    ];
+    
 
     public function class(): BelongsTo
     {

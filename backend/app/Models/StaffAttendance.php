@@ -9,10 +9,8 @@ class StaffAttendance extends Model
 {
     protected $fillable = ['employee_id', 'date', 'status', 'remark', 'marked_by'];
 
-    protected function casts(): array
-    {
-        return ['date' => 'date'];
-    }
+    protected $casts = ['date' => 'date'];
+    
 
     public function employee(): BelongsTo
     {

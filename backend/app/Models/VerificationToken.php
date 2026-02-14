@@ -13,12 +13,9 @@ class VerificationToken extends Model
         'exam_term_id', 'doc_type', 'expires_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'expires_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 
     // ── Relationships ──
 

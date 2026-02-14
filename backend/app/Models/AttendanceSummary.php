@@ -13,17 +13,15 @@ class AttendanceSummary extends Model
         'attendance_percent',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'total_days' => 'integer',
-            'present_days' => 'integer',
-            'absent_days' => 'integer',
-            'late_days' => 'integer',
-            'leave_days' => 'integer',
-            'attendance_percent' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'total_days' => 'integer',
+        'present_days' => 'integer',
+        'absent_days' => 'integer',
+        'late_days' => 'integer',
+        'leave_days' => 'integer',
+        'attendance_percent' => 'decimal:2',
+    ];
+    
 
     public function studentEnrollment(): BelongsTo
     {

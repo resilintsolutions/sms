@@ -15,16 +15,14 @@ class Assignment extends Model
         'end_time', 'scope', 'status', 'attachments',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'total_marks' => 'integer',
-            'due_date' => 'date',
-            'start_time' => 'datetime',
-            'end_time' => 'datetime',
-            'attachments' => 'array',
-        ];
-    }
+    protected $casts = [
+        'total_marks' => 'integer',
+        'due_date' => 'date',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+        'attachments' => 'array',
+    ];
+    
 
     public function institution(): BelongsTo
     {

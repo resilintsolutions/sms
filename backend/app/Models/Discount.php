@@ -9,10 +9,8 @@ class Discount extends Model
 {
     protected $fillable = ['institution_id', 'name', 'type', 'value', 'description', 'is_active'];
 
-    protected function casts(): array
-    {
-        return ['value' => 'decimal:2', 'is_active' => 'boolean'];
-    }
+    protected $casts = ['value' => 'decimal:2', 'is_active' => 'boolean'];
+    
 
     public function institution(): BelongsTo
     {

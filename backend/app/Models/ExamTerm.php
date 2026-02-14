@@ -13,14 +13,12 @@ class ExamTerm extends Model
         'start_date', 'end_date', 'publish_status',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'start_date' => 'date',
-            'end_date' => 'date',
-            'weight' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'weight' => 'decimal:2',
+    ];
+    
 
     public function institution(): BelongsTo
     {

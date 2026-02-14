@@ -12,13 +12,10 @@ class ComponentMark extends Model
         'marks_obtained', 'max_marks', 'absent_code', 'entered_by',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'marks_obtained' => 'decimal:2',
-            'max_marks' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'marks_obtained' => 'decimal:2',
+        'max_marks' => 'integer',
+    ];
 
     // ── Relationships ──
 

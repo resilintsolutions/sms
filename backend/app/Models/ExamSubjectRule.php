@@ -12,14 +12,11 @@ class ExamSubjectRule extends Model
         'max_marks', 'weight', 'is_optional',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'max_marks' => 'integer',
-            'weight' => 'decimal:2',
-            'is_optional' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'max_marks' => 'integer',
+        'weight' => 'decimal:2',
+        'is_optional' => 'boolean',
+    ];
 
     // ── Relationships ──
 

@@ -12,13 +12,11 @@ class Result extends Model
         'position', 'total_students',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'total_marks' => 'decimal:2',
-            'gpa' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'total_marks' => 'decimal:2',
+        'gpa' => 'decimal:2',
+    ];
+    
 
     public function examTerm(): BelongsTo
     {

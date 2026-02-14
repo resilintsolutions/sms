@@ -9,10 +9,8 @@ class StudentAttendance extends Model
 {
     protected $fillable = ['student_enrollment_id', 'date', 'status', 'remark', 'marked_by'];
 
-    protected function casts(): array
-    {
-        return ['date' => 'date'];
-    }
+    protected $casts = ['date' => 'date'];
+    
 
     public function studentEnrollment(): BelongsTo
     {

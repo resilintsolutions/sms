@@ -12,14 +12,12 @@ class FeeStructure extends Model
         'amount', 'effective_from', 'effective_to',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'amount' => 'decimal:2',
-            'effective_from' => 'date',
-            'effective_to' => 'date',
-        ];
-    }
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'effective_from' => 'date',
+        'effective_to' => 'date',
+    ];
+    
 
     public function institution(): BelongsTo
     {

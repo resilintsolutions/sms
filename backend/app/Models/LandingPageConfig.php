@@ -224,6 +224,6 @@ class LandingPageConfig extends Model
                 'sectionTitle' => 'News & Events',
                 'sectionTitle_bn' => 'খবর ও ইভেন্ট',
             ],
-        ];
+    ];
     }
 }

@@ -15,14 +15,12 @@ class LessonPlan extends Model
         'duration_minutes', 'topic', 'topic_bn', 'week_number', 'status',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'plan_date' => 'date',
-            'duration_minutes' => 'integer',
-            'week_number' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'plan_date' => 'date',
+        'duration_minutes' => 'integer',
+        'week_number' => 'integer',
+    ];
+    
 
     public function institution(): BelongsTo
     {

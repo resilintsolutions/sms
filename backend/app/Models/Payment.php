@@ -12,13 +12,11 @@ class Payment extends Model
         'method', 'reference', 'note', 'collected_by',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'amount' => 'decimal:2',
-            'payment_date' => 'date',
-        ];
-    }
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'payment_date' => 'date',
+    ];
+    
 
     public function institution(): BelongsTo
     {

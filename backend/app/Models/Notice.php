@@ -12,15 +12,13 @@ class Notice extends Model
         'audience', 'attachments', 'published_at', 'expires_at', 'is_published',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'attachments' => 'array',
-            'published_at' => 'datetime',
-            'expires_at' => 'datetime',
-            'is_published' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'attachments' => 'array',
+        'published_at' => 'datetime',
+        'expires_at' => 'datetime',
+        'is_published' => 'boolean',
+    ];
+    
 
     public function institution(): BelongsTo
     {

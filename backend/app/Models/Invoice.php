@@ -14,17 +14,15 @@ class Invoice extends Model
         'status', 'due_date',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'sub_total' => 'decimal:2',
-            'discount_amount' => 'decimal:2',
-            'total_amount' => 'decimal:2',
-            'paid_amount' => 'decimal:2',
-            'due_amount' => 'decimal:2',
-            'due_date' => 'date',
-        ];
-    }
+    protected $casts = [
+        'sub_total' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'total_amount' => 'decimal:2',
+        'paid_amount' => 'decimal:2',
+        'due_amount' => 'decimal:2',
+        'due_date' => 'date',
+    ];
+    
 
     public function institution(): BelongsTo
     {

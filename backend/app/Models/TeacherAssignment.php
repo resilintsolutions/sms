@@ -9,10 +9,8 @@ class TeacherAssignment extends Model
 {
     protected $fillable = ['employee_id', 'section_id', 'subject_id', 'academic_session_id', 'is_class_teacher'];
 
-    protected function casts(): array
-    {
-        return ['is_class_teacher' => 'boolean'];
-    }
+    protected $casts = ['is_class_teacher' => 'boolean'];
+    
 
     public function employee(): BelongsTo
     {

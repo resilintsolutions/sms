@@ -6,26 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class IdCardTemplate extends Model
+class CommunitySetting extends Model
 {
     use HasFactory;
 
+    protected $table = 'community_settings';
+
     protected $fillable = [
         'institution_id',
-        'name',
-        'type',
-        'background_image',
-        'is_sample',
-        'field_positions',
-        'design_config',
-        'is_active',
+        'enable_community',
+        'who_can_post',
+        'allow_cross_school_comments',
     ];
 
     protected $casts = [
-        'is_sample'       => 'boolean',
-        'is_active'       => 'boolean',
-        'field_positions'  => 'array',
-        'design_config'    => 'array',
+        'enable_community' => 'boolean',
+        'allow_cross_school_comments' => 'boolean',
     ];
     
 

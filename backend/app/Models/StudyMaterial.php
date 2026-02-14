@@ -14,12 +14,10 @@ class StudyMaterial extends Model
         'is_public', 'status',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'is_public' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'is_public' => 'boolean',
+    ];
+    
 
     public function institution(): BelongsTo
     {

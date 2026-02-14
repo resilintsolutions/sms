@@ -15,13 +15,11 @@ class Student extends Model
         'status', 'admission_date',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'date_of_birth' => 'date',
-            'admission_date' => 'date',
-        ];
-    }
+    protected $casts = [
+        'date_of_birth' => 'date',
+        'admission_date' => 'date',
+    ];
+    
 
     public function institution(): BelongsTo
     {

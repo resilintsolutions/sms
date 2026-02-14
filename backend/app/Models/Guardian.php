@@ -13,13 +13,11 @@ class Guardian extends Model
         'nid', 'address', 'occupation', 'monthly_income', 'is_primary',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'monthly_income' => 'decimal:2',
-            'is_primary' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'monthly_income' => 'decimal:2',
+        'is_primary' => 'boolean',
+    ];
+    
 
     public function institution(): BelongsTo
     {

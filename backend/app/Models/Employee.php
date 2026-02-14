@@ -13,14 +13,12 @@ class Employee extends Model
         'department', 'phone', 'email', 'join_date', 'is_teacher', 'is_active',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'join_date' => 'date',
-            'is_teacher' => 'boolean',
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'join_date' => 'date',
+        'is_teacher' => 'boolean',
+        'is_active' => 'boolean',
+    ];
+    
 
     public function institution(): BelongsTo
     {

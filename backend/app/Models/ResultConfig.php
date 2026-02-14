@@ -13,17 +13,14 @@ class ResultConfig extends Model
         'use_component_marks', 'custom_rules', 'is_active',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'pass_marks_percent' => 'decimal:2',
-            'min_gpa' => 'decimal:2',
-            'max_fail_subjects' => 'integer',
-            'use_component_marks' => 'boolean',
-            'custom_rules' => 'array',
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'pass_marks_percent' => 'decimal:2',
+        'min_gpa' => 'decimal:2',
+        'max_fail_subjects' => 'integer',
+        'use_component_marks' => 'boolean',
+        'custom_rules' => 'array',
+        'is_active' => 'boolean',
+    ];
 
     // ── Relationships ──
 

@@ -13,12 +13,10 @@ class CoCurricularRecord extends Model
         'activity_date', 'note', 'recorded_by',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'activity_date' => 'date',
-        ];
-    }
+    protected $casts = [
+        'activity_date' => 'date',
+    ];
+    
 
     public function studentEnrollment(): BelongsTo
     {

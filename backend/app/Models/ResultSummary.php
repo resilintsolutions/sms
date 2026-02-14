@@ -14,20 +14,17 @@ class ResultSummary extends Model
         'remarks', 'subject_grades',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'total_marks' => 'decimal:2',
-            'total_full_marks' => 'decimal:2',
-            'percentage' => 'decimal:2',
-            'gpa' => 'decimal:2',
-            'fail_count' => 'integer',
-            'position' => 'integer',
-            'total_students' => 'integer',
-            'promoted' => 'boolean',
-            'subject_grades' => 'array',
-        ];
-    }
+    protected $casts = [
+        'total_marks' => 'decimal:2',
+        'total_full_marks' => 'decimal:2',
+        'percentage' => 'decimal:2',
+        'gpa' => 'decimal:2',
+        'fail_count' => 'integer',
+        'position' => 'integer',
+        'total_students' => 'integer',
+        'promoted' => 'boolean',
+        'subject_grades' => 'array',
+    ];
 
     // ── Relationships ──
 

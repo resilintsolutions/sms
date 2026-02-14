@@ -10,10 +10,8 @@ class Subject extends Model
 {
     protected $fillable = ['institution_id', 'name', 'name_bn', 'code', 'is_optional'];
 
-    protected function casts(): array
-    {
-        return ['is_optional' => 'boolean'];
-    }
+    protected $casts = ['is_optional' => 'boolean'];
+    
 
     public function institution(): BelongsTo
     {

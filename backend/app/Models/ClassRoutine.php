@@ -13,13 +13,11 @@ class ClassRoutine extends Model
         'start_time', 'end_time', 'room',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'start_time' => 'datetime:H:i',
-            'end_time' => 'datetime:H:i',
-        ];
-    }
+    protected $casts = [
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
+    ];
+    
 
     public function institution(): BelongsTo
     {

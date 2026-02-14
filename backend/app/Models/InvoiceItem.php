@@ -9,10 +9,8 @@ class InvoiceItem extends Model
 {
     protected $fillable = ['invoice_id', 'fee_head_id', 'amount'];
 
-    protected function casts(): array
-    {
-        return ['amount' => 'decimal:2'];
-    }
+    protected $casts = ['amount' => 'decimal:2'];
+    
 
     public function invoice(): BelongsTo
     {

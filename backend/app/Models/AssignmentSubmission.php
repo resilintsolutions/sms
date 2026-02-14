@@ -13,15 +13,13 @@ class AssignmentSubmission extends Model
         'submitted_at', 'graded_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'marks_obtained' => 'decimal:2',
-            'attachments' => 'array',
-            'submitted_at' => 'datetime',
-            'graded_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'marks_obtained' => 'decimal:2',
+        'attachments' => 'array',
+        'submitted_at' => 'datetime',
+        'graded_at' => 'datetime',
+    ];
+    
 
     public function assignment(): BelongsTo
     {

@@ -9,14 +9,12 @@ class ExamRoutine extends Model
 {
     protected $fillable = ['exam_term_id', 'class_id', 'subject_id', 'exam_date', 'start_time', 'end_time', 'full_marks'];
 
-    protected function casts(): array
-    {
-        return [
-            'exam_date' => 'date',
-            'start_time' => 'datetime:H:i',
-            'end_time' => 'datetime:H:i',
-        ];
-    }
+    protected $casts = [
+        'exam_date' => 'date',
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
+    ];
+    
 
     public function examTerm(): BelongsTo
     {
