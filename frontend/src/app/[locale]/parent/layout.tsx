@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { Calendar, DollarSign, LayoutDashboard, Megaphone, ClipboardList, ShieldAlert, LogOut, CalendarDays, BookOpen } from 'lucide-react';
+import { Calendar, DollarSign, LayoutDashboard, Megaphone, ClipboardList, ShieldAlert, LogOut, CalendarDays, BookOpen, Settings, Globe } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '@/lib/auth';
 import { useTranslations } from 'next-intl';
+import { useCommunityEnabled } from '@/lib/useCommunityEnabled';
 
 export default function ParentPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,8 +16,9 @@ export default function ParentPortalLayout({ children }: { children: React.React
   const t = useTranslations('parent');
   const tn = useTranslations('nav');
   const tc = useTranslations('common');
+  const { enabled: communityEnabled } = useCommunityEnabled();
 
-  const navItems = [
+  const allNavItems = [
     { href: '/parent', icon: LayoutDashboard, label: tn('dashboard') },
     { href: '/parent/performance', icon: ClipboardList, label: tn('childPerformance') },
     { href: '/parent/schedule', icon: CalendarDays, label: tn('schedule') },
@@ -24,6 +26,8 @@ export default function ParentPortalLayout({ children }: { children: React.React
     { href: '/parent/fees', icon: DollarSign, label: tn('fees') },
     { href: '/parent/notifications', icon: Megaphone, label: tn('notifications') },
     { href: '/parent/meetings', icon: Calendar, label: tn('meetings') },
+    ...(communityEnabled ? [{ href: '/parent/community', icon: Globe, label: tn('community') }] : []),
+    { href: '/parent/profile', icon: Settings, label: 'Profile Settings' },
   ];
 
   if (loading) {
@@ -55,7 +59,7 @@ export default function ParentPortalLayout({ children }: { children: React.React
           <span className="text-lg font-bold text-white">{t('portal')}</span>
         </div>
         <nav className="space-y-1 p-4">
-          {navItems.map(({ href, icon: Icon, label }) => {
+          {allNavItems.map(({ href, icon: Icon, label }) => {
             const path = `/${locale}${href}`;
             return (
               <Link

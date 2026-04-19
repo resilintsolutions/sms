@@ -311,7 +311,7 @@ export default function SuperAdminSchoolConfigPage() {
             <div>
               <label className="block text-sm font-medium text-slate-700">{t('customDomain')}</label>
               <input type="text" value={instForm.custom_domain ?? ''} onChange={(e) => setInstForm((f) => ({ ...f, custom_domain: e.target.value }))} className="input mt-1" placeholder="school.example.com" />
-              <p className="mt-1 text-xs text-slate-500">{t('dnsHint')}</p>
+              <p className="mt-1 text-xs text-slate-500">{t('dnsHint')} — A record → 185.146.167.202</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">{t('subdomain')}</label>

@@ -25,6 +25,10 @@ use App\Http\Controllers\Api\V1\LessonPlanController;
 use App\Http\Controllers\Api\V1\IdCardController;
 use App\Http\Controllers\Api\V1\LibraryController;
 use App\Http\Controllers\Api\V1\ResultCardController;
+use App\Http\Controllers\Api\V1\CommunityPostController;
+use App\Http\Controllers\Api\V1\CommunityCompetitionController;
+use App\Http\Controllers\Api\V1\CommunityModerationController;
+use App\Http\Controllers\Api\V1\CommunitySettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -32,9 +36,10 @@ Route::prefix('v1')->group(function () {
     // ═══════════════════════════════════════════════
     // PUBLIC ROUTES (no auth)
     // ═══════════════════════════════════════════════
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('contact', [LandingPageController::class, 'submitContact'])->middleware('throttle:5,1');
     Route::get('landing-page', [LandingPageController::class, 'show']);
-    Route::post('contact', [LandingPageController::class, 'submitContact']);
+    Route::get('resolve-domain', [SuperAdminController::class, 'resolveDomain']);
 
     // ═══════════════════════════════════════════════
     // AUTHENTICATED ROUTES
@@ -42,6 +47,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
+        Route::patch('profile', [AuthController::class, 'updateProfile']);
+        Route::post('change-password', [AuthController::class, 'changePassword']);
 
         // ─── Dashboard: Admin (admin, accountant, librarian) ───
         Route::middleware('role:admin,super_admin,accountant,librarian')->group(function () {
@@ -366,6 +373,7 @@ Route::prefix('v1')->group(function () {
             Route::get('institutions/{institution}', [SuperAdminController::class, 'show']);
             Route::put('institutions/{institution}', [SuperAdminController::class, 'update']);
             Route::put('institutions/{institution}/config', [SuperAdminController::class, 'updateConfig']);
+            Route::get('institutions/{institution}/verify-domain', [SuperAdminController::class, 'verifyDomain']);
             // Admin user management per institution
             Route::get('institutions/{institution}/admins', [SuperAdminController::class, 'listAdmins']);
             Route::post('institutions/{institution}/admins', [SuperAdminController::class, 'addAdmin']);
@@ -444,4 +452,67 @@ Route::prefix('v1')->group(function () {
     // ─── Public: Result Card Web View + PDF ───
     Route::get('results/{student}/{year}', [ResultCardController::class, 'resultCardView']);
     Route::get('results/{student}/{year}/pdf', [ResultCardController::class, 'resultCardPdf']);
+
+    // ═══════════════════════════════════════════════
+    // COMMUNITY MODULE
+    // ═══════════════════════════════════════════════
+    Route::middleware('auth:sanctum')->prefix('community')->group(function () {
+
+        // ─── Community status (any authenticated user) ───
+        Route::get('status', [CommunitySettingsController::class, 'status']);
+
+        // ─── Feed (any authenticated user with community enabled) ───
+        Route::get('feed', [CommunityPostController::class, 'feed']);
+        Route::get('my-posts', [CommunityPostController::class, 'myPosts']);
+
+        // ─── Posts CRUD ───
+        Route::post('posts', [CommunityPostController::class, 'store']);
+        Route::get('posts/{id}', [CommunityPostController::class, 'show']);
+        Route::patch('posts/{id}', [CommunityPostController::class, 'update']);
+        Route::delete('posts/{id}', [CommunityPostController::class, 'destroy']);
+        Route::post('posts/{id}/publish', [CommunityPostController::class, 'publish']);
+
+        // ─── Likes ───
+        Route::post('posts/{id}/like', [CommunityPostController::class, 'like']);
+        Route::delete('posts/{id}/like', [CommunityPostController::class, 'unlike']);
+
+        // ─── Comments ───
+        Route::get('posts/{id}/comments', [CommunityPostController::class, 'comments']);
+        Route::post('posts/{id}/comments', [CommunityPostController::class, 'addComment']);
+
+        // ─── Reports ───
+        Route::post('reports', [CommunityPostController::class, 'report']);
+
+        // ─── Competitions ───
+        Route::get('competitions', [CommunityCompetitionController::class, 'index']);
+        Route::get('competitions/{id}', [CommunityCompetitionController::class, 'show']);
+        Route::post('competitions', [CommunityCompetitionController::class, 'store'])->middleware('role:admin,super_admin');
+        Route::patch('competitions/{id}', [CommunityCompetitionController::class, 'update'])->middleware('role:admin,super_admin');
+        Route::post('competitions/{id}/invite', [CommunityCompetitionController::class, 'invite'])->middleware('role:admin,super_admin');
+        Route::patch('competitions/{id}/respond', [CommunityCompetitionController::class, 'respond'])->middleware('role:admin,super_admin');
+
+        // ─── Settings (School admin + super admin) ───
+        Route::middleware('role:admin,super_admin')->group(function () {
+            Route::get('settings', [CommunitySettingsController::class, 'show']);
+            Route::patch('settings', [CommunitySettingsController::class, 'update']);
+        });
+
+        // ─── Moderation (admin / super_admin) ───
+        Route::middleware('role:admin,super_admin')->prefix('moderation')->group(function () {
+            Route::get('reports', [CommunityModerationController::class, 'reports']);
+            Route::patch('reports/{id}', [CommunityModerationController::class, 'reviewReport']);
+            Route::post('posts/{id}/remove', [CommunityModerationController::class, 'removePost']);
+            Route::post('posts/{id}/restore', [CommunityModerationController::class, 'restorePost']);
+            Route::post('comments/{id}/remove', [CommunityModerationController::class, 'removeComment']);
+            Route::get('flagged', [CommunityModerationController::class, 'flaggedContent']);
+            Route::get('stats', [CommunityModerationController::class, 'stats']);
+        });
+
+        // ─── Audit Log & Super-admin settings ───
+        Route::middleware('role:super_admin')->group(function () {
+            Route::get('moderation/audit-log', [CommunityModerationController::class, 'auditLog']);
+            Route::get('settings/all', [CommunitySettingsController::class, 'all']);
+            Route::post('settings/toggle-all', [CommunitySettingsController::class, 'toggleAll']);
+        });
+    });
 });

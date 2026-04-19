@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth, type UserRole } from '@/lib/auth';
+import { useCommunityEnabled } from '@/lib/useCommunityEnabled';
 
 type NavItem = {
   href: string;
@@ -57,6 +58,7 @@ const adminNavItems: NavItem[] = [
   { href: '/admin/id-cards', icon: CreditCard, key: 'idCards', roles: ['admin', 'super_admin'] },
   { href: '/admin/result-cards', icon: FileBarChart, key: 'resultCards', roles: ['admin', 'super_admin'] },
   { href: '/admin/exam-config', icon: ClipboardList, key: 'examConfig', roles: ['admin', 'super_admin'] },
+  { href: '/admin/community', icon: Globe, key: 'community', roles: ['admin', 'super_admin', 'teacher', 'student', 'parent'] },
   { href: '/admin/reports', icon: FileBarChart, key: 'reports', roles: ['admin', 'super_admin', 'accountant'] },
 ];
 
@@ -82,6 +84,7 @@ export function Sidebar() {
   const locale = (params?.locale as string) || 'bn';
   const t = useTranslations('nav');
   const { hasRole, roles, canAccess } = useAuth();
+  const { enabled: communityEnabled } = useCommunityEnabled();
 
   // Map nav keys to module names for canAccess checks
   const keyToModule: Record<string, string> = {
@@ -102,10 +105,15 @@ export function Sidebar() {
     idCards: 'idCards',
     resultCards: 'resultCards',
     examConfig: 'examConfig',
+    community: 'community',
     reports: 'reports',
   };
 
   const visibleAdminItems = adminNavItems.filter((item) => {
+    // Hide community nav item if community is disabled (admin always sees it to manage settings)
+    if (item.key === 'community' && !communityEnabled && !hasRole('admin', 'super_admin')) {
+      return false;
+    }
     // If item has explicit roles, check those
     if (item.roles) return item.roles.some((r) => roles.includes(r));
     // Otherwise use canAccess for the module

@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth';
 import { Sidebar } from './Sidebar';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, Settings } from 'lucide-react';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const t = useTranslations('common');
@@ -67,6 +67,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <span className="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-700">
               {user?.roles?.[0]?.label || user?.roles?.[0]?.name || t('login')}
             </span>
+            <Link
+              href={`/${locale}/admin/profile`}
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 flex items-center gap-1"
+            >
+              <Settings className="h-4 w-4" /> Profile
+            </Link>
             <Link
               href={`/${locale}/login`}
               className="rounded-lg px-3 py-1.5 text-sm font-medium text-primary-600 transition-colors hover:bg-primary-50 hover:text-primary-700"

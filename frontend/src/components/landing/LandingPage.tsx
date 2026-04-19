@@ -934,9 +934,9 @@ export default function LandingPage() {
 
       {/* ════════════ CONTACT ════════════ */}
       {contact.showSection !== false && (
-        <MotionSection id="contact" className="scroll-mt-20 py-20 sm:py-28 relative overflow-hidden" variant={fadeInUp}>
+        <MotionSection id="contact" className="scroll-mt-20 py-20 sm:py-28 relative overflow-hidden bg-gradient-to-br from-fuchsia-100 via-purple-50 to-violet-50" variant={fadeInUp}>
           {/* Decorative background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-50/50 via-white to-fuchsia-50/30" />
+          <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-200 via-purple-100 to-violet-100 opacity-80" />
           <div className="absolute top-0 left-1/3 w-96 h-96 bg-gradient-to-br from-purple-200/20 to-fuchsia-200/20 rounded-full blur-3xl" />
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <motion.div className="text-center max-w-2xl mx-auto mb-12 relative z-10" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
@@ -963,7 +963,22 @@ export default function LandingPage() {
                     <div><p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{locale === 'bn' ? 'ঠিকানা' : 'Address'}</p><p className="font-semibold text-slate-700">{locale === 'bn' && contact.address_bn ? contact.address_bn : contact.address}</p></div>
                   </motion.div>
                 )}
-                {contact.mapEmbed && <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 aspect-video" dangerouslySetInnerHTML={{ __html: contact.mapEmbed }} />}
+                {contact.mapEmbed && (() => {
+                  // Sanitize: only allow iframe src URLs from trusted embed providers
+                  const srcMatch = contact.mapEmbed.match(/<iframe[^>]+src=["']([^"']+)["']/i);
+                  const iframeSrc = srcMatch?.[1];
+                  const isTrustedEmbed = iframeSrc && /^https:\/\/(www\.google\.com\/maps|maps\.google\.com|www\.openstreetmap\.org)\//i.test(iframeSrc);
+                  return isTrustedEmbed ? (
+                    <iframe
+                      src={iframeSrc}
+                      className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 aspect-video w-full"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      sandbox="allow-scripts allow-same-origin"
+                      title="Map"
+                    />
+                  ) : null;
+                })()}
               </motion.div>
               {showContactForm && (
                 <motion.div className="lg:col-span-3 rounded-2xl border border-violet-200/30 bg-white/90 backdrop-blur-sm p-6 sm:p-8 shadow-lg shadow-violet-100/20" variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>

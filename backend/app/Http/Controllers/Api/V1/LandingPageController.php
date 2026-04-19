@@ -14,19 +14,48 @@ use Illuminate\Support\Str;
 
 class LandingPageController extends Controller
 {
+    /**
+     * Resolve institution ID from request context.
+     * Priority: 1) ?institution_id= param  2) custom_domain match  3) subdomain match  4) default ID 1
+     *
+     * For custom domains (e.g. www.dtschool.edu.bd → institutions.custom_domain)
+     * For subdomains (e.g. dt-school.sms.resilentsolutions.com → institutions.subdomain = 'dt-school')
+     */
     protected function institutionId(): int
     {
+        // 1. Explicit query parameter
         $id = request()->get('institution_id');
         if ($id !== null && $id !== '') {
             return (int) $id;
         }
-        $host = request()->getHost();
+
+        // Use X-Forwarded-Host (set by reverse proxy / Next.js API proxy) if available,
+        // otherwise fall back to the standard Host header.
+        $host = request()->header('X-Forwarded-Host') ?: request()->getHost();
+        $host = preg_replace('/:\d+$/', '', $host); // strip port
+        $hostNaked = preg_replace('/^www\./', '', $host);
+
+        // 2. Check custom_domain match (e.g. school.edu.bd)
         $institution = Institution::where('custom_domain', $host)
-            ->orWhere('custom_domain', preg_replace('/^www\./', '', $host))
+            ->orWhere('custom_domain', $hostNaked)
             ->first();
         if ($institution) {
             return (int) $institution->id;
         }
+
+        // 3. Check subdomain match (e.g. dt-school.sms.resilentsolutions.com)
+        //    Extract the subdomain prefix from the PLATFORM_DOMAIN env
+        $platformDomain = env('PLATFORM_DOMAIN', 'sms.resilentsolutions.com');
+        $platformDomainEscaped = preg_quote($platformDomain, '/');
+        if (preg_match('/^(.+)\.' . $platformDomainEscaped . '$/i', $hostNaked, $matches)) {
+            $subdomainSlug = strtolower($matches[1]);
+            $institution = Institution::where('subdomain', $subdomainSlug)->first();
+            if ($institution) {
+                return (int) $institution->id;
+            }
+        }
+
+        // 4. Default to institution 1
         return 1;
     }
 
@@ -229,7 +258,8 @@ class LandingPageController extends Controller
 
         $file = $request->file('file');
         $type = $request->input('type');
-        $ext = $file->getClientOriginalExtension() ?: 'jpg';
+        // Use guessExtension() which derives extension from detected MIME type, not the user-supplied filename
+        $ext = $file->guessExtension() ?: 'jpg';
         $name = $type . '_' . Str::random(12) . '.' . strtolower($ext);
 
         $path = 'landing';

@@ -127,10 +127,11 @@ export default function ExamConfigPage() {
 
   // ─── Sessions, Classes, Exams ───
   const { data: sessionsData } = useQuery({
-    queryKey: ['sessions'],
-    queryFn: () => api<SessionItem[]>('/sessions'),
+    queryKey: ['academic-sessions'],
+    queryFn: () => api<{ data: SessionItem[] }>('/academic-sessions?per_page=100'),
   });
-  const sessions = sessionsData?.data ?? [];
+  // Backend paginates: response is { success, data: { data: [...], current_page, ... } }
+  const sessions: SessionItem[] = Array.isArray(sessionsData?.data) ? sessionsData.data : (sessionsData?.data as unknown as { data: SessionItem[] })?.data ?? [];
 
   // Auto-select current session
   useEffect(() => {
@@ -148,10 +149,11 @@ export default function ExamConfigPage() {
 
   const { data: examsData } = useQuery({
     queryKey: ['exam-terms', selectedSession],
-    queryFn: () => api<ExamTerm[]>(`/exam-terms?session_id=${selectedSession}`),
+    queryFn: () => api<{ data: ExamTerm[] }>(`/exam-terms?academic_session_id=${selectedSession}&per_page=100`),
     enabled: !!selectedSession,
   });
-  const exams = examsData?.data ?? [];
+  // Backend paginates exam-terms too
+  const exams: ExamTerm[] = Array.isArray(examsData?.data) ? examsData.data : (examsData?.data as unknown as { data: ExamTerm[] })?.data ?? [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1184,7 +1186,7 @@ function GenerateResultsTab({ selectedExam, selectedClass, selectedSession, quer
             <p className="text-sm text-amber-600 flex items-center gap-1"><AlertTriangle className="h-4 w-4" /> Select a session from the filters</p>
           ) : (
             <button
-              onClick={() => generateAnnualMutation.mutate({ session_id: selectedSession, class_id: selectedClass || undefined })}
+              onClick={() => generateAnnualMutation.mutate({ academic_session_id: selectedSession, class_id: selectedClass || undefined })}
               disabled={generateAnnualMutation.isPending}
               className="flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50 w-full justify-center"
             >

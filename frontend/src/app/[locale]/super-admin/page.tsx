@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
-import { Building2, Users, GraduationCap, Power, PowerOff, Settings, Save, Globe, Plus, X } from 'lucide-react';
+import { Building2, Users, GraduationCap, Power, PowerOff, Settings, Save, Globe, Plus, X, CheckCircle2, AlertCircle, ExternalLink, Copy, RefreshCw, Server, Shield } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 type Institution = {
@@ -57,6 +57,17 @@ const emptyNewSchool: NewSchoolForm = {
 
 const FEATURE_KEYS = ['fees', 'attendance', 'exams', 'notices', 'landing_page'] as const;
 
+const SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP || '127.0.0.1';
+const PLATFORM_DOMAIN = process.env.NEXT_PUBLIC_PLATFORM_DOMAIN || 'school.local';
+
+type DomainVerification = {
+  domain: string;
+  server_ip: string;
+  verified: boolean;
+  resolved_ip: string | null;
+  dns_records: Array<{ type: string; value: string }>;
+};
+
 export default function SuperAdminPage() {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -68,6 +79,9 @@ export default function SuperAdminPage() {
   const [activeTab, setActiveTab] = useState<'schools' | 'dns'>('schools');
   const [showAddModal, setShowAddModal] = useState(false);
   const [newSchool, setNewSchool] = useState<NewSchoolForm>(emptyNewSchool);
+  const [verifying, setVerifying] = useState<number | null>(null);
+  const [verificationResults, setVerificationResults] = useState<Record<number, DomainVerification>>({});
+  const [copiedText, setCopiedText] = useState<string | null>(null);
 
   const { data: statsData } = useQuery({
     queryKey: ['super-admin-stats'],
@@ -154,6 +168,32 @@ export default function SuperAdminPage() {
       return;
     }
     createMutation.mutate(newSchool);
+  };
+
+  const handleVerifyDomain = async (inst: Institution) => {
+    setVerifying(inst.id);
+    try {
+      const res = await api<DomainVerification>(`/super-admin/institutions/${inst.id}/verify-domain`);
+      if (res.success && res.data) {
+        setVerificationResults((prev) => ({ ...prev, [inst.id]: res.data! }));
+        if (res.data.verified) {
+          toast.success(`${inst.custom_domain} — DNS verified! Domain is pointing to the server.`);
+        } else {
+          toast.error(`${inst.custom_domain} — DNS not verified. Domain is not pointing to ${SERVER_IP}.`);
+        }
+      }
+    } catch {
+      toast.error('Failed to verify domain');
+    }
+    setVerifying(null);
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedText(text);
+      setTimeout(() => setCopiedText(null), 2000);
+      toast.success('Copied to clipboard');
+    });
   };
 
   if (isLoading) {
@@ -264,7 +304,7 @@ export default function SuperAdminPage() {
                     {inst.custom_domain ? (
                       <span className="text-slate-700">{inst.custom_domain}</span>
                     ) : inst.subdomain ? (
-                      <span className="text-slate-600">{inst.subdomain}.yourschools.com</span>
+                      <span className="text-slate-600">{inst.subdomain}.{PLATFORM_DOMAIN}</span>
                     ) : (
                       <span className="text-slate-400">—</span>
                     )}
@@ -315,61 +355,230 @@ export default function SuperAdminPage() {
       )}
 
       {activeTab === 'dns' && (
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 px-6 py-4">
-            <h3 className="text-lg font-semibold text-slate-800">{t('dnsTitle')}</h3>
-            <p className="text-sm text-slate-500">{t('dnsDesc')}</p>
+        <div className="space-y-6">
+          {/* Server Info Card */}
+          <div className="rounded-xl border border-indigo-200 bg-gradient-to-r from-indigo-50 to-blue-50 p-6 shadow-sm">
+            <div className="flex items-start gap-4">
+              <Server className="mt-0.5 h-8 w-8 text-indigo-600" />
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-indigo-900">{t('serverConfig')}</h3>
+                <p className="mt-1 text-sm text-indigo-700">{t('serverConfigDesc')}</p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-lg bg-white/80 px-4 py-3 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{t('serverIp')}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <code className="text-lg font-bold text-slate-800">{SERVER_IP}</code>
+                      <button type="button" onClick={() => copyToClipboard(SERVER_IP)} className="rounded p-1 text-slate-400 hover:text-indigo-600" title="Copy">
+                        {copiedText === SERVER_IP ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white/80 px-4 py-3 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{t('platformDomain')}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <code className="text-lg font-bold text-slate-800">{PLATFORM_DOMAIN}</code>
+                      <button type="button" onClick={() => copyToClipboard(PLATFORM_DOMAIN)} className="rounded p-1 text-slate-400 hover:text-indigo-600" title="Copy">
+                        {copiedText === PLATFORM_DOMAIN ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white/80 px-4 py-3 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{t('portalUrl')}</p>
+                    <code className="mt-1 block text-lg font-bold text-slate-800">https://{PLATFORM_DOMAIN}</code>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="table-header">
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">{t('school')}</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">{t('customDomain')}</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">{t('subdomain')}</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">{t('dnsRecord')}</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">{t('configure')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {institutions.map((inst) => (
-                  <tr key={inst.id} className="table-row-hover border-b border-slate-100">
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-slate-800">{inst.name}</p>
-                    </td>
-                    <td className="px-6 py-4 font-mono text-sm">
-                      {inst.custom_domain || (
-                        <span className="text-slate-400">{t('notSet')}</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 font-mono text-sm">
-                      {inst.subdomain ? (
-                        <span>{inst.subdomain}.yourschools.com</span>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      {inst.custom_domain ? (
-                        <code className="rounded bg-slate-100 px-2 py-1">
-                          {inst.custom_domain} CNAME → your-app.example.com
-                        </code>
-                      ) : (
-                        <span className="text-slate-400">{t('addDomainToSee')}</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <Link
-                        href={`/${locale}/super-admin/school/${inst.id}`}
-                        className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-primary-600 hover:bg-primary-50"
-                      >
-                        <Globe className="h-4 w-4" /> {t('editConfig')}
-                      </Link>
-                    </td>
+
+          {/* DNS Setup Instructions */}
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+            <div className="flex items-start gap-3">
+              <Shield className="mt-0.5 h-6 w-6 text-amber-600" />
+              <div>
+                <h4 className="font-semibold text-amber-900">{t('dnsSetupGuide')}</h4>
+                <div className="mt-3 space-y-3 text-sm text-amber-800">
+                  <div className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-200 text-xs font-bold text-amber-800">1</span>
+                    <div>
+                      <p className="font-medium">{t('dnsStep1Title')}</p>
+                      <p className="text-amber-700">{t('dnsStep1Desc')}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-200 text-xs font-bold text-amber-800">2</span>
+                    <div>
+                      <p className="font-medium">{t('dnsStep2Title')}</p>
+                      <p className="text-amber-700">{t('dnsStep2Desc')}</p>
+                      <div className="mt-2 rounded border border-amber-300 bg-white/50 px-3 py-2 font-mono text-xs">
+                        <p>Type: <strong>A Record</strong> | Host: <strong>@</strong> | Value: <strong>{SERVER_IP}</strong></p>
+                        <p className="mt-1">Type: <strong>A Record</strong> | Host: <strong>www</strong> | Value: <strong>{SERVER_IP}</strong></p>
+                        <p className="mt-2 text-amber-600">— OR for subdomains —</p>
+                        <p className="mt-1">Type: <strong>CNAME</strong> | Host: <strong>www</strong> | Value: <strong>{PLATFORM_DOMAIN}</strong></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-200 text-xs font-bold text-amber-800">3</span>
+                    <div>
+                      <p className="font-medium">{t('dnsStep3Title')}</p>
+                      <p className="text-amber-700">{t('dnsStep3Desc')}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-200 text-xs font-bold text-amber-800">4</span>
+                    <div>
+                      <p className="font-medium">{t('dnsStep4Title')}</p>
+                      <p className="text-amber-700">{t('dnsStep4Desc')}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Domain Management Table */}
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-200 px-6 py-4">
+              <h3 className="text-lg font-semibold text-slate-800">{t('domainManagement')}</h3>
+              <p className="text-sm text-slate-500">{t('domainManagementDesc')}</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="table-header">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-semibold">{t('school')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold">{t('customDomain')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold">{t('subdomainUrl')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold">{t('dnsStatus')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold">{t('landingPageUrl')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold">{t('actions')}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {institutions.map((inst) => {
+                    const verification = verificationResults[inst.id];
+                    const subdomainUrl = inst.subdomain ? `${inst.subdomain}.${PLATFORM_DOMAIN}` : null;
+                    const landingUrl = inst.custom_domain
+                      ? `https://${inst.custom_domain}`
+                      : subdomainUrl
+                        ? `https://${subdomainUrl}`
+                        : null;
+
+                    return (
+                      <tr key={inst.id} className="table-row-hover border-b border-slate-100">
+                        <td className="px-6 py-4">
+                          <p className="font-medium text-slate-800">{inst.name}</p>
+                          {inst.name_bn && <p className="text-xs text-slate-500">{inst.name_bn}</p>}
+                          <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${inst.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                            {inst.is_active ? t('active') : t('inactive')}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          {inst.custom_domain ? (
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-slate-100 px-2 py-1 text-sm font-medium text-slate-800">{inst.custom_domain}</code>
+                              <button type="button" onClick={() => copyToClipboard(inst.custom_domain!)} className="rounded p-1 text-slate-400 hover:text-indigo-600">
+                                {copiedText === inst.custom_domain ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-slate-400">{t('notConfigured')}</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          {subdomainUrl ? (
+                            <div className="flex items-center gap-2">
+                              <code className="rounded bg-blue-50 px-2 py-1 text-sm font-medium text-blue-700">{subdomainUrl}</code>
+                              <button type="button" onClick={() => copyToClipboard(subdomainUrl)} className="rounded p-1 text-slate-400 hover:text-indigo-600">
+                                {copiedText === subdomainUrl ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-slate-400">—</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          {inst.custom_domain ? (
+                            verification ? (
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-1.5">
+                                  {verification.verified ? (
+                                    <>
+                                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                      <span className="text-sm font-medium text-emerald-700">{t('dnsVerified')}</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <AlertCircle className="h-4 w-4 text-red-500" />
+                                      <span className="text-sm font-medium text-red-700">{t('dnsNotVerified')}</span>
+                                    </>
+                                  )}
+                                </div>
+                                {verification.resolved_ip && (
+                                  <p className="text-xs text-slate-500">
+                                    Resolves to: <code className="rounded bg-slate-100 px-1">{verification.resolved_ip}</code>
+                                    {verification.resolved_ip !== SERVER_IP && (
+                                      <span className="ml-1 text-red-500">(expected: {SERVER_IP})</span>
+                                    )}
+                                  </p>
+                                )}
+                                {verification.dns_records.length > 0 && (
+                                  <div className="text-xs text-slate-500">
+                                    {verification.dns_records.map((r, i) => (
+                                      <span key={i} className="mr-2">{r.type}: {r.value}</span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-sm text-slate-400">{t('notChecked')}</span>
+                            )
+                          ) : (
+                            <span className="text-sm text-slate-400">—</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          {landingUrl ? (
+                            <a
+                              href={landingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+                            >
+                              {t('visitSite')} <ExternalLink className="h-3.5 w-3.5" />
+                            </a>
+                          ) : (
+                            <span className="text-sm text-slate-400">{t('noDomainSet')}</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            {inst.custom_domain && (
+                              <button
+                                type="button"
+                                onClick={() => handleVerifyDomain(inst)}
+                                disabled={verifying === inst.id}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 disabled:opacity-50"
+                              >
+                                <RefreshCw className={`h-3.5 w-3.5 ${verifying === inst.id ? 'animate-spin' : ''}`} />
+                                {t('verifyDns')}
+                              </button>
+                            )}
+                            <Link
+                              href={`/${locale}/super-admin/school/${inst.id}`}
+                              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-primary-600 hover:bg-primary-50"
+                            >
+                              <Settings className="h-3.5 w-3.5" /> {t('editConfig')}
+                            </Link>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -569,7 +778,7 @@ export default function SuperAdminPage() {
                       placeholder="e.g. dhaka-model"
                     />
                     <span className="inline-flex items-center rounded-r-lg border border-l-0 border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-500">
-                      .yourschools.com
+                      .{PLATFORM_DOMAIN}
                     </span>
                   </div>
                 </div>

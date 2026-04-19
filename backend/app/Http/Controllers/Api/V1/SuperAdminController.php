@@ -15,6 +15,117 @@ use Illuminate\Support\Facades\Hash;
 class SuperAdminController extends Controller
 {
     /**
+     * Resolve institution from domain/subdomain. Public endpoint for frontend routing.
+     * Returns institution_id or null if no match.
+     */
+    public function resolveDomain(Request $request): JsonResponse
+    {
+        $domain = $request->input('domain', '');
+        if (empty($domain)) {
+            return response()->json(['success' => true, 'data' => ['institution_id' => null]]);
+        }
+
+        $domainNaked = preg_replace('/^www\./', '', strtolower($domain));
+
+        // 1. Check custom_domain
+        $inst = Institution::where('custom_domain', $domain)
+            ->orWhere('custom_domain', $domainNaked)
+            ->first();
+        if ($inst) {
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'institution_id' => $inst->id,
+                    'name' => $inst->name,
+                    'type' => 'custom_domain',
+                    'is_active' => $inst->is_active,
+                ],
+            ]);
+        }
+
+        // 2. Check subdomain (e.g. dt-school.sms.resilentsolutions.com)
+        $platformDomain = env('PLATFORM_DOMAIN', 'sms.resilentsolutions.com');
+        $platformDomainEscaped = preg_quote($platformDomain, '/');
+        if (preg_match('/^(.+)\.' . $platformDomainEscaped . '$/i', $domainNaked, $matches)) {
+            $slug = strtolower($matches[1]);
+            $inst = Institution::where('subdomain', $slug)->first();
+            if ($inst) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'institution_id' => $inst->id,
+                        'name' => $inst->name,
+                        'type' => 'subdomain',
+                        'is_active' => $inst->is_active,
+                    ],
+                ]);
+            }
+        }
+
+        return response()->json(['success' => true, 'data' => ['institution_id' => null]]);
+    }
+
+    /**
+     * Verify DNS for a school's custom domain - checks if domain resolves to our server IP.
+     */
+    public function verifyDomain(Request $request, Institution $institution): JsonResponse
+    {
+        $domain = $institution->custom_domain;
+        if (empty($domain)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No custom domain set for this school.',
+            ], 422);
+        }
+
+        $serverIp = env('SERVER_IP', '185.146.167.202');
+        $verified = false;
+        $dnsInfo = [];
+
+        // Check A record
+        $aRecords = @dns_get_record($domain, DNS_A);
+        if ($aRecords) {
+            foreach ($aRecords as $record) {
+                $dnsInfo[] = ['type' => 'A', 'value' => $record['ip'] ?? ''];
+                if (($record['ip'] ?? '') === $serverIp) {
+                    $verified = true;
+                }
+            }
+        }
+
+        // Check CNAME record
+        $cnameRecords = @dns_get_record($domain, DNS_CNAME);
+        if ($cnameRecords) {
+            foreach ($cnameRecords as $record) {
+                $target = $record['target'] ?? '';
+                $dnsInfo[] = ['type' => 'CNAME', 'value' => $target];
+                // Resolve the CNAME target to see if it points to our IP
+                $resolved = @gethostbyname($target);
+                if ($resolved === $serverIp) {
+                    $verified = true;
+                }
+            }
+        }
+
+        // Also resolve the domain directly
+        $resolvedIp = @gethostbyname($domain);
+        if ($resolvedIp === $serverIp) {
+            $verified = true;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'domain' => $domain,
+                'server_ip' => $serverIp,
+                'verified' => $verified,
+                'resolved_ip' => $resolvedIp !== $domain ? $resolvedIp : null,
+                'dns_records' => $dnsInfo,
+            ],
+        ]);
+    }
+
+    /**
      * Create a new institution (school) with an initial admin user.
      */
     public function store(Request $request): JsonResponse
@@ -33,7 +144,7 @@ class SuperAdminController extends Controller
             // Optional: create an admin user for this school
             'admin_name'          => 'nullable|string|max:255',
             'admin_email'         => 'nullable|email|max:255|unique:users,email',
-            'admin_password'      => 'nullable|string|min:6|max:100',
+            'admin_password'      => 'required_with:admin_email|string|min:8|max:100',
         ]);
 
         $institution = DB::transaction(function () use ($request) {
@@ -68,7 +179,7 @@ class SuperAdminController extends Controller
                 $user = User::create([
                     'name'           => $request->input('admin_name', 'Admin'),
                     'email'          => $request->input('admin_email'),
-                    'password'       => Hash::make($request->input('admin_password', 'password')),
+                    'password'       => Hash::make($request->input('admin_password')),
                     'institution_id' => $institution->id,
                 ]);
 
@@ -255,7 +366,7 @@ class SuperAdminController extends Controller
             'name_bn'  => 'nullable|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email',
             'phone'    => 'nullable|string|max:50',
-            'password' => 'required|string|min:6|max:100',
+            'password' => 'required|string|min:8|max:100',
         ]);
 
         $user = User::create([
@@ -318,7 +429,7 @@ class SuperAdminController extends Controller
         }
 
         $request->validate([
-            'password' => 'required|string|min:6|max:100',
+            'password' => 'required|string|min:8|max:100',
         ]);
 
         $user->password = Hash::make($request->input('password'));

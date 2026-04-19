@@ -36,8 +36,8 @@ import {
 
 /* ───── Types ───── */
 
-type ClassItem = { id: number; name: string; numeric_name?: number };
-type SectionItem = { id: number; name: string; class_id: number };
+type ClassItem = { id: number; name: string; name_bn?: string; numeric_name?: number };
+type SectionItem = { id: number; name: string; name_bn?: string; class_id: number };
 type ExamTerm = { id: number; name: string; name_bn?: string; start_date?: string; end_date?: string; publish_status?: string; academic_session_id?: number };
 type SessionItem = { id: number; name: string; is_current?: boolean };
 

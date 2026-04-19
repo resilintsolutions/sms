@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { Building2, LayoutDashboard, LogOut, ShieldAlert } from 'lucide-react';
+import { Building2, LayoutDashboard, LogOut, ShieldAlert, Settings, Globe } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
@@ -54,6 +54,18 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
           >
             <Building2 className="h-5 w-5" /> {t('schoolAdmin')}
+          </Link>
+          <Link
+            href={`/${locale}/super-admin/community`}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+          >
+            <Globe className="h-5 w-5" /> Community Management
+          </Link>
+          <Link
+            href={`/${locale}/super-admin/profile`}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+          >
+            <Settings className="h-5 w-5" /> Profile Settings
           </Link>
         </nav>
       </aside>

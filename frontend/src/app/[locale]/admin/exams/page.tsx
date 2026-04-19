@@ -21,6 +21,14 @@ type ExamTerm = {
   academic_session?: { id: number; name: string };
 };
 
+type ExamTermMutationBody = {
+  name?: string;
+  start_date?: string;
+  end_date?: string;
+  publish_status?: string;
+  academic_session_id?: number;
+};
+
 function getTermsList(res: unknown): ExamTerm[] {
   const d = (res as { data?: ExamTerm[] | { data?: ExamTerm[] } })?.data;
   return Array.isArray(d) ? d : (d as { data?: ExamTerm[] })?.data ?? [];
@@ -63,7 +71,7 @@ export default function ExamsPage() {
     onError: () => toast.error(t('saveFailed')),
   });
   const updateMutation = useMutation({
-    mutationFn: ({ id, ...body }: { id: number; name?: string; start_date?: string; end_date?: string; publish_status?: string }) =>
+    mutationFn: ({ id, ...body }: { id: number } & ExamTermMutationBody) =>
       api(`/exam-terms/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['exam-terms'] }); toast.success(t('savedSuccessfully')); setModalOpen(false); setEditing(null); },
     onError: () => toast.error(t('saveFailed')),

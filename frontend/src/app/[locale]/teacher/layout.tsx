@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { BookOpen, ClipboardList, LayoutDashboard, User, ShieldAlert, LogOut, FileBarChart, FileEdit } from 'lucide-react';
+import { BookOpen, ClipboardList, LayoutDashboard, User, ShieldAlert, LogOut, FileBarChart, FileEdit, Settings, Globe } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '@/lib/auth';
 import { useTranslations } from 'next-intl';
+import { useCommunityEnabled } from '@/lib/useCommunityEnabled';
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,8 +16,9 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
   const t = useTranslations('teacher');
   const tn = useTranslations('nav');
   const tc = useTranslations('common');
+  const { enabled: communityEnabled } = useCommunityEnabled();
 
-  const navItems = [
+  const allNavItems = [
     { href: '/teacher', icon: LayoutDashboard, label: tn('dashboard') },
     { href: '/teacher/classes', icon: BookOpen, label: 'My Classes' },
     { href: '/teacher/assignments', icon: FileEdit, label: 'Assignments & Quizzes' },
@@ -25,6 +27,8 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
     { href: '/teacher/reports', icon: FileBarChart, label: tn('reports') },
     { href: '/teacher/lesson-plans', icon: BookOpen, label: tn('lessonPlans') },
     { href: '/teacher/upload', icon: BookOpen, label: tn('contentUpload') },
+    ...(communityEnabled ? [{ href: '/teacher/community', icon: Globe, label: tn('community') }] : []),
+    { href: '/teacher/profile', icon: Settings, label: 'Profile Settings' },
   ];
 
   if (loading) {
@@ -56,7 +60,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
           <span className="text-lg font-bold text-white">{t('portal')}</span>
         </div>
         <nav className="space-y-1 p-4">
-          {navItems.map(({ href, icon: Icon, label }) => {
+          {allNavItems.map(({ href, icon: Icon, label }) => {
             const path = `/${locale}${href}`;
             return (
               <Link

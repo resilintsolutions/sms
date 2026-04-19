@@ -78,4 +78,55 @@ class AuthController extends Controller
             'permissions' => $permissions,
         ]);
     }
+
+    /**
+     * Update the authenticated user's profile.
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name'     => 'sometimes|string|max:255',
+            'name_bn'  => 'nullable|string|max:255',
+            'phone'    => 'nullable|string|max:20',
+            'email'    => 'sometimes|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($request->only(['name', 'name_bn', 'phone', 'email']));
+
+        $user->load('roles.permissions', 'institution');
+
+        return response()->json([
+            'success' => true,
+            'data' => $user,
+            'message' => 'Profile updated successfully.',
+        ]);
+    }
+
+    /**
+     * Change the authenticated user's password.
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password'     => 'required|string|min:8|confirmed',
+        ]);
+
+        if (! Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The current password is incorrect.'],
+            ]);
+        }
+
+        $user->update(['password' => Hash::make($request->new_password)]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully.',
+        ]);
+    }
 }

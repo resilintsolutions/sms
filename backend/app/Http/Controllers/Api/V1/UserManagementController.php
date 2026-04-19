@@ -83,7 +83,7 @@ class UserManagementController extends Controller
             'name'          => 'required|string|max:255',
             'name_bn'       => 'nullable|string|max:255',
             'email'         => 'required|email|max:255|unique:users,email',
-            'password'      => 'required|string|min:6|max:100',
+            'password'      => 'required|string|min:8|max:100',
             'phone'         => 'nullable|string|max:50',
             'is_active'     => 'nullable|boolean',
             'roles'         => 'required|array|min:1',
@@ -177,7 +177,7 @@ class UserManagementController extends Controller
             'name'      => 'nullable|string|max:255',
             'name_bn'   => 'nullable|string|max:255',
             'email'     => ['nullable', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'password'  => 'nullable|string|min:6|max:100',
+            'password'  => 'nullable|string|min:8|max:100',
             'phone'     => 'nullable|string|max:50',
             'is_active' => 'nullable|boolean',
             'roles'     => 'nullable|array|min:1',
@@ -292,6 +292,11 @@ class UserManagementController extends Controller
 
         $user->is_active = !$user->is_active;
         $user->save();
+
+        // Revoke all tokens when deactivating a user so existing sessions are invalidated
+        if (! $user->is_active) {
+            $user->tokens()->delete();
+        }
 
         return response()->json([
             'success' => true,

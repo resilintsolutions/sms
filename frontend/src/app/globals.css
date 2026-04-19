@@ -11,6 +11,7 @@
 :root {
   --foreground: 15 23 42;
   --background: 240 245 252;
+  --font-bangla: "Noto Sans Bengali", "Hind Siliguri", "SolaimanLipi", "Kalpurush", system-ui, sans-serif;
 }
 
 body {

@@ -69,6 +69,8 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS:-localhost,localhost:3000,localhost:8000,127.0.0.1}
+      PLATFORM_DOMAIN: ${PLATFORM_DOMAIN:-sms.resilentsolutions.com}
+      SERVER_IP: ${SERVER_IP:-185.146.167.202}
       MAIL_MAILER: ${MAIL_MAILER:-log}
       MAIL_HOST: ${MAIL_HOST:-mailpit}
       MAIL_PORT: ${MAIL_PORT:-1025}
@@ -109,11 +111,13 @@ services:
       dockerfile: Dockerfile
       args:
         BACKEND_URL: http://nginx:80
+        NEXT_PUBLIC_PLATFORM_DOMAIN: ${PLATFORM_DOMAIN:-sms.resilentsolutions.com}
     container_name: sms_frontend
     restart: unless-stopped
     environment:
       BACKEND_URL: http://nginx:80
       NODE_ENV: production
+      NEXT_PUBLIC_PLATFORM_DOMAIN: ${PLATFORM_DOMAIN:-sms.resilentsolutions.com}
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:

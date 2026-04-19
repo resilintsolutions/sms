@@ -10,7 +10,7 @@ return [
 
     'expire_on_close' => false,
 
-    'encrypt' => false,
+    'encrypt' => true,
 
     'files' => storage_path('framework/sessions'),
 

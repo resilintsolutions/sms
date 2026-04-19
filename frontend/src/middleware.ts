@@ -5,6 +5,13 @@ import { locales, defaultLocale } from '@/i18n/routing';
 const AUTH_COOKIE = 'sb_auth';
 const ROLES_COOKIE = 'sb_roles';
 
+/**
+ * The primary platform domain. Requests from custom school domains
+ * (that are NOT this domain or its subdomains) will have their
+ * institution resolved from the Host header by the backend API.
+ */
+const PLATFORM_DOMAIN = process.env.NEXT_PUBLIC_PLATFORM_DOMAIN || 'sms.resilentsolutions.com';
+
 const protectedPaths = ['admin', 'teacher', 'parent', 'student', 'portal', 'super-admin', 'accountant', 'librarian'];
 
 /** Which roles can access which path segments */
@@ -25,6 +32,27 @@ function isProtectedPath(pathname: string): boolean {
 function getLocaleFromPath(pathname: string): string {
   const segment = pathname.split('/')[1];
   return locales.includes(segment as (typeof locales)[number]) ? segment : defaultLocale;
+}
+
+/** Check if this request is from a school's custom domain (not the platform domain) */
+function isSchoolCustomDomain(host: string): boolean {
+  const hostLower = host.toLowerCase().replace(/:\d+$/, ''); // strip port
+
+  // localhost / IP / platform domain itself / platform subdomains → not a school custom domain
+  if (
+    hostLower === 'localhost' ||
+    hostLower.startsWith('127.0.0.1') ||
+    hostLower.startsWith('192.168.') ||
+    hostLower === PLATFORM_DOMAIN ||
+    hostLower.endsWith('.' + PLATFORM_DOMAIN)
+  ) {
+    return false;
+  }
+
+  // *.local domains that match a school custom_domain pattern ARE school domains
+  // e.g. dhaka-ideal.local is a school custom domain
+  // e.g. dhaka.school.local is a platform subdomain (caught above)
+  return true;
 }
 
 /** Get the default portal path for a user based on their roles */
@@ -54,9 +82,25 @@ function getPortalSegment(pathname: string): string | null {
 
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get('host') || '';
   const authCookie = request.cookies.get(AUTH_COOKIE);
   const rolesCookie = request.cookies.get(ROLES_COOKIE);
   const locale = getLocaleFromPath(pathname);
+
+  // ── School custom domain handling ──
+  // If a request arrives on a custom school domain (e.g. www.dtschool.edu.bd),
+  // the landing page (/) is the default. Only /login and portal routes work.
+  // The backend API will resolve the institution from the Host header.
+  if (isSchoolCustomDomain(host)) {
+    // Allow: root/landing page, login, API, static assets, and authenticated portal routes
+    const isLandingOrLogin = pathname === '/' || pathname.match(/^\/[a-z]{2}\/?$/) || pathname.includes('/login');
+    const isStaticOrApi = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.');
+
+    // For protected paths on custom domains, still enforce auth
+    if (isProtectedPath(pathname) && !authCookie?.value) {
+      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    }
+  }
 
   // Redirect logged-in users away from login page to their default portal
   if (pathname.includes('/login') && authCookie?.value) {

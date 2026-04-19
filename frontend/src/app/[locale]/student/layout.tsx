@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { BookOpen, ClipboardList, LayoutDashboard, Users, ShieldAlert, LogOut } from 'lucide-react';
+import { BookOpen, ClipboardList, LayoutDashboard, Users, ShieldAlert, LogOut, Settings, Globe } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '@/lib/auth';
 import { useTranslations } from 'next-intl';
+import { useCommunityEnabled } from '@/lib/useCommunityEnabled';
 
 export default function StudentPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,13 +16,16 @@ export default function StudentPortalLayout({ children }: { children: React.Reac
   const t = useTranslations('student');
   const tn = useTranslations('nav');
   const tc = useTranslations('common');
+  const { enabled: communityEnabled } = useCommunityEnabled();
 
-  const navItems = [
+  const allNavItems = [
     { href: '/student', icon: LayoutDashboard, label: tn('dashboard') },
     { href: '/student/assignments', icon: BookOpen, label: tn('assignments') },
     { href: '/student/results', icon: ClipboardList, label: tn('results') },
     { href: '/student/materials', icon: BookOpen, label: tn('materials') },
     { href: '/student/attendance', icon: Users, label: tn('attendance') },
+    ...(communityEnabled ? [{ href: '/student/community', icon: Globe, label: tn('community') }] : []),
+    { href: '/student/profile', icon: Settings, label: 'Profile Settings' },
   ];
 
   if (loading) {
@@ -53,7 +57,7 @@ export default function StudentPortalLayout({ children }: { children: React.Reac
           <span className="text-lg font-bold text-white">{t('portal')}</span>
         </div>
         <nav className="space-y-1 p-4">
-          {navItems.map(({ href, icon: Icon, label }) => {
+          {allNavItems.map(({ href, icon: Icon, label }) => {
             const path = `/${locale}${href}`;
             return (
               <Link
