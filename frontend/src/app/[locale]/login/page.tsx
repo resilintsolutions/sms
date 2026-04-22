@@ -2,10 +2,19 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { authApi, setAuthCookie } from '@/lib/api';
+import { api, authApi, setAuthCookie } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+
+type LandingPageResponse = {
+  config?: {
+    site?: {
+      timezone?: string;
+    };
+  };
+};
 
 export default function LoginPage() {
   const t = useTranslations('common');
@@ -17,7 +26,52 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [now, setNow] = useState(() => new Date());
   const { refresh } = useAuth();
+  const { data: landingPage, refetch } = useQuery({
+    queryKey: ['landing-page-login-clock'],
+    queryFn: async () => {
+      const res = await api<LandingPageResponse>('/landing-page');
+      return res.data;
+    },
+    staleTime: 60_000,
+  });
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') return undefined;
+    const channel = new BroadcastChannel('landing-page-refresh');
+    channel.onmessage = () => {
+      refetch();
+    };
+    return () => channel.close();
+  }, [refetch]);
+
+  const configuredTimezone = landingPage?.config?.site?.timezone || 'Asia/Dhaka';
+  const localeCode = locale === 'bn' ? 'bn-BD' : 'en-US';
+  const formatClock = (date: Date, timeZone: string) => {
+    try {
+      return new Intl.DateTimeFormat(localeCode, {
+        timeZone,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      }).format(date);
+    } catch {
+      return new Intl.DateTimeFormat(localeCode, {
+        timeZone: 'Asia/Dhaka',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      }).format(date);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +114,17 @@ export default function LoginPage() {
             <p className="mt-1 text-sm text-primary-100">
               বাংলাদেশ স্কুল ম্যানেজমেন্ট সিস্টেম
             </p>
+            <div className="mt-4 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-left shadow-lg backdrop-blur-sm">
+              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-primary-100">
+                Current time
+              </p>
+              <p className="mt-1 font-mono text-3xl font-semibold tracking-[0.22em] text-white">
+                {formatClock(now, configuredTimezone)}
+              </p>
+              <p className="mt-1 text-xs text-primary-100">
+                {configuredTimezone}
+              </p>
+            </div>
           </div>
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
