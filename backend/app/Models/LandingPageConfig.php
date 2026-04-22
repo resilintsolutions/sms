@@ -59,6 +59,7 @@ class LandingPageConfig extends Model
                 'schoolName' => 'Our School',
                 'schoolName_bn' => 'আমাদের স্কুল',
                 'bannerImageUrl' => '',
+                'timezone' => 'Asia/Dhaka',
             ],
             'header' => [
                 'topBarEnabled' => true,
