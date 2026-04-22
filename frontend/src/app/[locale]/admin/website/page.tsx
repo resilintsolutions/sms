@@ -18,7 +18,7 @@ type GalleryImage = { url?: string; caption?: string; caption_bn?: string };
 type Testimonial = { name?: string; name_bn?: string; role?: string; role_bn?: string; text?: string; text_bn?: string; imageUrl?: string; rating?: number };
 
 type Config = {
-  site?: { logoUrl?: string; schoolName?: string; schoolName_bn?: string; bannerImageUrl?: string };
+  site?: { logoUrl?: string; schoolName?: string; schoolName_bn?: string; bannerImageUrl?: string; timezone?: string };
   header?: { topBarEnabled?: boolean; topBarLeft?: string; topBarLeft_bn?: string; topBarRight?: string; topBarRight_bn?: string };
   nav?: { links?: NavLink[] };
   hero?: { title?: string; title_bn?: string; subtitle?: string; subtitle_bn?: string; ctaText?: string; ctaLink?: string; imageUrl?: string; background?: string };
@@ -44,9 +44,23 @@ type Config = {
 };
 
 const ICON_OPTIONS = ['GraduationCap', 'Shield', 'Users', 'BookOpen', 'Megaphone', 'Award', 'Star', 'Target', 'Heart', 'Globe', 'Trophy', 'Lightbulb', 'Camera', 'Sparkles', 'CheckCircle2'];
+const TIMEZONE_OPTIONS = [
+  { value: 'Asia/Dhaka', label: 'Bangladesh (Asia/Dhaka)' },
+  { value: 'UTC', label: 'UTC' },
+  { value: 'Asia/Kolkata', label: 'India (Asia/Kolkata)' },
+  { value: 'Asia/Dubai', label: 'UAE (Asia/Dubai)' },
+  { value: 'Asia/Singapore', label: 'Singapore (Asia/Singapore)' },
+  { value: 'Asia/Tokyo', label: 'Japan (Asia/Tokyo)' },
+  { value: 'Europe/London', label: 'UK (Europe/London)' },
+  { value: 'Europe/Berlin', label: 'Germany (Europe/Berlin)' },
+  { value: 'America/New_York', label: 'US Eastern (America/New_York)' },
+  { value: 'America/Chicago', label: 'US Central (America/Chicago)' },
+  { value: 'America/Denver', label: 'US Mountain (America/Denver)' },
+  { value: 'America/Los_Angeles', label: 'US Pacific (America/Los_Angeles)' },
+];
 
 const defaultConfig: Config = {
-  site: { logoUrl: '', schoolName: '', schoolName_bn: '', bannerImageUrl: '' },
+  site: { logoUrl: '', schoolName: '', schoolName_bn: '', bannerImageUrl: '', timezone: 'Asia/Dhaka' },
   header: { topBarEnabled: true, topBarLeft: '', topBarLeft_bn: '', topBarRight: '', topBarRight_bn: '' },
   nav: { links: [{ label: 'About', label_bn: 'আমাদের সম্পর্কে', href: '#about' }, { label: 'Notices', label_bn: 'নোটিশ', href: '#notices' }, { label: 'Contact', label_bn: 'যোগাযোগ', href: '#contact' }] },
   hero: { title: '', title_bn: '', subtitle: '', subtitle_bn: '', ctaText: 'Login to Portal', ctaLink: '/login', imageUrl: '', background: 'gradient' },
@@ -392,6 +406,23 @@ export default function AdminWebsitePage() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700">School name (Bangla)</label>
                     <input type="text" value={config.site?.schoolName_bn ?? ''} onChange={(e) => setSite('schoolName_bn', e.target.value)} className="input mt-1" placeholder="বাংলা নাম" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-slate-700">Login page clock timezone</label>
+                    <select
+                      value={config.site?.timezone ?? 'Asia/Dhaka'}
+                      onChange={(e) => setSite('timezone', e.target.value)}
+                      className="input mt-1"
+                    >
+                      {TIMEZONE_OPTIONS.map((timezone) => (
+                        <option key={timezone.value} value={timezone.value}>
+                          {timezone.label}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-2 text-sm text-slate-500">
+                      This timezone controls the realtime digital clock shown on the public login page.
+                    </p>
                   </div>
                 </div>
               </>

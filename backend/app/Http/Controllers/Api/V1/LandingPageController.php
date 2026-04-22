@@ -131,6 +131,7 @@ class LandingPageController extends Controller
             'config.site.schoolName' => 'nullable|string|max:255',
             'config.site.schoolName_bn' => 'nullable|string|max:255',
             'config.site.bannerImageUrl' => 'nullable|string|max:500',
+            'config.site.timezone' => 'nullable|timezone',
             'config.header' => 'nullable|array',
             'config.header.topBarEnabled' => 'nullable|boolean',
             'config.header.topBarLeft' => 'nullable|string|max:255',
